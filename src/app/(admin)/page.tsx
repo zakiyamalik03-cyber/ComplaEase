@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { StudentsMetrics } from "@/components/ecommerce/StudentsMetrics";
+import { ComplaintMetrics} from "@/components/ecommerce/ComplaintMetrics";
 import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
+import MonthlySalesChart from "@/components/ecommerce/MonthlyComplaintChart";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
-import RecentOrders from "@/components/ecommerce/RecentStudents";
+import RecentOrders from "@/components/ecommerce/RankingEmployees";
 import DemographicCard from "@/components/ecommerce/DemographicCard";
-import RecentStudents from "@/components/ecommerce/RecentStudents";
+import MonthlyComplaintChart from "@/components/ecommerce/MonthlyComplaintChart";
+import RankingEmployees from "@/components/ecommerce/RankingEmployees";
 
 export const metadata: Metadata = {
   title:
@@ -18,9 +19,8 @@ export default function Ecommerce() {
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-12">
-        <StudentsMetrics />
-
-        <MonthlySalesChart />
+        <ComplaintMetrics />
+        <MonthlyComplaintChart />
       </div>
 
       {/* <div className="col-span-12 xl:col-span-5">
@@ -36,7 +36,7 @@ export default function Ecommerce() {
       </div> */}
 
       <div className="col-span-12 xl:col-span-12">
-        <RecentStudents />
+        <RankingEmployees />
       </div>
     </div>
   );
