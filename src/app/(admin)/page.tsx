@@ -11,8 +11,8 @@ import RankingEmployees from "@/components/ecommerce/RankingEmployees";
 
 export const metadata: Metadata = {
   title:
-    "DevDoz Portal - Admin Dashboard",
-  description: "DevDoz Portal Admin Dashboard - Monitor course analytics, track student progress, manage instructors, and oversee platform performance with real-time insights and comprehensive reporting tools.",
+    "ComplaEase - Admin Dashboard",
+  description: "ComplaEase Admin Dashboard - Monitor course analytics, track student progress, manage instructors, and oversee platform performance with real-time insights and comprehensive reporting tools.",
 };
 
 export default function Ecommerce() {

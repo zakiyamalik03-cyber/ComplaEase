@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
+  BoxIconLine,
   CalenderIcon,
   ChevronDownIcon,
   GridIcon,
@@ -47,12 +48,12 @@ const navItems: NavItem[] = [
   {
     name: "Students",
     icon: <TableIcon />,
-    path: "/student-table"
+    path: "/students"
   },
   {
-    name: "Teachers",
+    name: "Complaints",
     icon: <TableIcon />,
-    path: "/teacher-table"
+    path: "/complaints"
   },
   // {
   //   name: "Pages",
@@ -65,20 +66,10 @@ const navItems: NavItem[] = [
 ];
 const accountItems: NavItem[] = [
   {
-    icon: <BoxCubeIcon />,
-    name: "Accounts",
-    path: "/accounts",
+    icon: <BoxIconLine />,
+    name: "Resolve Complaints",
+    path: "/resolve-complaints",
   },
-  {
-    name: "Expense",
-    icon: <PieChartIcon />,
-    path: "/expense",
-  },
-  {
-    name: "Fee",
-    icon: <PageIcon />,
-    path: "/fee",
-  }
 ];
 
 const othersItems: NavItem[] = [
@@ -322,7 +313,7 @@ const AppSidebar: React.FC = () => {
                 width={30}
                 height={30}
               />
-              <span className="text-2xl font-bold dark:text-white">Portal</span>
+              <span className="text-2xl font-bold dark:text-white">ComplaEase</span>
             </span>
           ) : (
             <Image

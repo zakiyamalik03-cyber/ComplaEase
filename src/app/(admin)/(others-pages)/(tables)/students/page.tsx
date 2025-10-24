@@ -1,23 +1,23 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import BasicTableOne from "@/components/tables/BasicTableOne";
 import { Metadata } from "next";
 import React from "react";
+import StudentsTable from "./StudentsTable";
 
 export const metadata: Metadata = {
-  title: "Teachers Table | DevDoz Portal ",
+  title: "Students Table | ComplaEase ",
   description:
-    "This is Next.js Teachers Table page for DevDoz Portal Tailwind CSS Admin Dashboard",
+    "This is Next.js Students Table page for ComplaEase Tailwind CSS Admin Dashboard",
   // other metadata
 };
 
-export default function BasicTables() {
+export default function StudentsTables() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Teachers Table" />
+      <PageBreadcrumb pageTitle="Students Table" />
       <div className="space-y-6">
-        <ComponentCard title="Teachers Table">
-          <BasicTableOne />
+        <ComponentCard title="Students Table">
+          <StudentsTable />
         </ComponentCard>
       </div>
     </div>

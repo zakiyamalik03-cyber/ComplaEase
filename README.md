@@ -1,16 +1,16 @@
-# DevDoz Portal Next.js - Free Next.js Tailwind Admin Dashboard Template
+# ComplaEase Next.js - Free Next.js Tailwind Admin Dashboard Template
 
-DevDoz Portal is a free and open-source admin dashboard template built on **Next.js and Tailwind CSS** providing developers with everything they need to create a feature-rich and data-driven: back-end, dashboard, or admin panel solution for any sort of web project.
+ComplaEase is a free and open-source admin dashboard template built on **Next.js and Tailwind CSS** providing developers with everything they need to create a feature-rich and data-driven: back-end, dashboard, or admin panel solution for any sort of web project.
 
-![DevDoz Portal - Next.js Dashboard Preview](./banner.png)
+![ComplaEase - Next.js Dashboard Preview](./banner.png)
 
-With DevDoz Portal Next.js, you get access to all the necessary dashboard UI components, elements, and pages required to build a high-quality and complete dashboard or admin panel. Whether you're building a dashboard or admin panel for a complex web application or a simple website. 
+With ComplaEase Next.js, you get access to all the necessary dashboard UI components, elements, and pages required to build a high-quality and complete dashboard or admin panel. Whether you're building a dashboard or admin panel for a complex web application or a simple website. 
 
-DevDoz Portal utilizes the powerful features of **Next.js 15** and common features of Next.js such as server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements of **React 19** and the robustness of **TypeScript**, DevDoz Portal is the perfect solution to help get your project up and running quickly.
+ComplaEase utilizes the powerful features of **Next.js 15** and common features of Next.js such as server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements of **React 19** and the robustness of **TypeScript**, ComplaEase is the perfect solution to help get your project up and running quickly.
 
 ## Overview
 
-DevDoz Portal provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and control panels. It's built on:
+ComplaEase provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and control panels. It's built on:
 
 - Next.js 15.x
 - React 19
@@ -18,25 +18,25 @@ DevDoz Portal provides essential UI components and layouts for building feature-
 - Tailwind CSS V4
 
 ### Quick Links
-- [✨ Visit Website](https://DevDoz Portal.com)
-- [📄 Documentation](https://DevDoz Portal.com/docs)
-- [⬇️ Download](https://DevDoz Portal.com/download)
+- [✨ Visit Website](https://ComplaEase.com)
+- [📄 Documentation](https://ComplaEase.com/docs)
+- [⬇️ Download](https://ComplaEase.com/download)
 - [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1463141366275764364)
-- [⚡ Get PRO Version](https://DevDoz Portal.com/pricing)
+- [⚡ Get PRO Version](https://ComplaEase.com/pricing)
 
 ### Demos
-- [Free Version](https://nextjs-free-demo.DevDoz Portal.com)
-- [Pro Version](https://nextjs-demo.DevDoz Portal.com)
+- [Free Version](https://nextjs-free-demo.ComplaEase.com)
+- [Pro Version](https://nextjs-demo.ComplaEase.com)
 
 ### Other Versions
-- [HTML Version](https://github.com/DevDoz Portal/DevDoz Portal-free-tailwind-dashboard-template)
-- [React Version](https://github.com/DevDoz Portal/free-react-tailwind-admin-dashboard)
-- [Vue.js Version](https://github.com/DevDoz Portal/vue-tailwind-admin-dashboard)
+- [HTML Version](https://github.com/ComplaEase/ComplaEase-free-tailwind-dashboard-template)
+- [React Version](https://github.com/ComplaEase/free-react-tailwind-admin-dashboard)
+- [Vue.js Version](https://github.com/ComplaEase/vue-tailwind-admin-dashboard)
 
 ## Installation
 
 ### Prerequisites
-To get started with DevDoz Portal, ensure you have the following prerequisites installed and set up:
+To get started with ComplaEase, ensure you have the following prerequisites installed and set up:
 
 - Node.js 18.x or later (recommended to use Node.js 20.x or later)
 
@@ -44,7 +44,7 @@ To get started with DevDoz Portal, ensure you have the following prerequisites i
 Clone the repository using the following command:
 
 ```bash
-git clone https://github.com/DevDoz Portal/free-nextjs-admin-dashboard.git
+git clone https://github.com/ComplaEase/free-nextjs-admin-dashboard.git
 ```
 
 > Windows Users: place the repository near the root of your drive if you face issues while cloning.
@@ -66,7 +66,7 @@ git clone https://github.com/DevDoz Portal/free-nextjs-admin-dashboard.git
 
 ## Components
 
-DevDoz Portal is a pre-designed starting point for building a web-based dashboard using Next.js and Tailwind CSS. The template includes:
+ComplaEase is a pre-designed starting point for building a web-based dashboard using Next.js and Tailwind CSS. The template includes:
 
 - Sophisticated and accessible sidebar
 - Data visualization components
@@ -93,7 +93,7 @@ All components are built with React and styled using Tailwind CSS for easy custo
 - Complete Figma design file
 - Email support
 
-To learn more about pro version features and pricing, visit our [pricing page](https://DevDoz Portal.com/pricing).
+To learn more about pro version features and pricing, visit our [pricing page](https://ComplaEase.com/pricing).
 
 ## Changelog
 
@@ -135,7 +135,7 @@ A major update focused on Next.js 15 implementation and comprehensive redesign.
 - Chart components now use ApexCharts for React
 - Authentication flow updated to use Server Actions and middleware
 
-[Read more](https://DevDoz Portal.com/docs/update-logs/nextjs) on this release.
+[Read more](https://ComplaEase.com/docs/update-logs/nextjs) on this release.
 
 #### Breaking Changes
 - Migrated from Next.js 14 to Next.js 15
@@ -166,7 +166,7 @@ A major update focused on Next.js 15 implementation and comprehensive redesign.
 
 ## License
 
-DevDoz Portal Next.js Free Version is released under the MIT License.
+ComplaEase Next.js Free Version is released under the MIT License.
 
 ## Support
 

@@ -30,7 +30,7 @@ export default function AuthLayout({
                   />
                 </Link>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  DevDoz Portal for Student Management.
+                  ComplaEase for Student Management.
                 </p>
               </div>
             </div>

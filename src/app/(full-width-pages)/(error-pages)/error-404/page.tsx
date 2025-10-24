@@ -5,9 +5,9 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Next.js Error 404 | DevDoz Portal - Next.js Dashboard Template",
+  title: "Next.js Error 404 | ComplaEase - Next.js Dashboard Template",
   description:
-    "This is Next.js Error 404 page for DevDoz Portal",
+    "This is Next.js Error 404 page for ComplaEase",
 };
 
 export default function Error404() {
@@ -47,7 +47,7 @@ export default function Error404() {
       </div>
       {/* <!-- Footer --> */}
       <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} - DevDoz Portal
+        &copy; {new Date().getFullYear()} - ComplaEase
       </p>
     </div>
   );
