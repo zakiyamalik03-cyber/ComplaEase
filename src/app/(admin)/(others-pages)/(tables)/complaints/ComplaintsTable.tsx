@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
+import Link from "next/link";
 
 interface Complaint {
   id: number;
@@ -139,6 +140,7 @@ export default function ComplaintsTable() {
               {tableData.map((complaint) => (
                 <TableRow key={complaint.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
+                  <Link href={`/complaints/${complaint.id}`}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 overflow-hidden rounded-full">
                         <Image
@@ -157,7 +159,9 @@ export default function ComplaintsTable() {
                         </span>
                       </div>
                     </div>
+                </Link>
                   </TableCell>
+
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {complaint.category}
                   </TableCell>
