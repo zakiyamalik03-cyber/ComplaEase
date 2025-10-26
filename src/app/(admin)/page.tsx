@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { ComplaintMetrics} from "@/components/ecommerce/ComplaintMetrics";
 import React from "react";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import MonthlySalesChart from "@/components/ecommerce/MonthlyComplaintChart";
+// import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
+// import MonthlySalesChart from "@/components/ecommerce/MonthlyComplaintChart";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
-import RecentOrders from "@/components/ecommerce/RankingEmployees";
-import DemographicCard from "@/components/ecommerce/DemographicCard";
+// import RecentOrders from "@/components/ecommerce/RankingEmployees";
+// import DemographicCard from "@/components/ecommerce/DemographicCard";
 import MonthlyComplaintChart from "@/components/ecommerce/MonthlyComplaintChart";
 import RankingEmployees from "@/components/ecommerce/RankingEmployees";
 
