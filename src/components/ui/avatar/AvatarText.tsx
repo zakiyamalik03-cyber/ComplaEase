@@ -18,7 +18,7 @@ const AvatarText: React.FC<AvatarTextProps> = ({ name, className = "" }) => {
   const getColorClass = (name: string) => {
     const colors = [
       "bg-brand-100 text-brand-600",
-      "bg-pink-100 text-pink-600",
+      "bg-brand-100 text-pink-600",
       "bg-cyan-100 text-cyan-600",
       "bg-orange-100 text-orange-600",
       "bg-green-100 text-green-600",
