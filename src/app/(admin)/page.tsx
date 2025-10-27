@@ -41,3 +41,27 @@ export default function Ecommerce() {
     </div>
   );
 }
+// "use client";
+// import { useSession } from "next-auth/react";
+// import StudentView from "@/components/StudentView";
+// import StaffView from "@/components/StaffView";
+// import ManagerView from "@/components/ManagerView";
+// import AdminView from "@/components/AdminView";
+
+// export default function Dashboard() {
+//   const { data: session, status } = useSession();
+
+//   if (status === "loading") return <p>Loading...</p>;
+//   if (!session) return <p>Please login to continue</p>;
+
+//   const role = session.user.role;
+
+//   return (
+//     <main className="p-6">
+//       {role === "student" && <StudentView />}
+//       {role === "staff" && <StaffView />}
+//       {role === "manager" && <ManagerView />}
+//       {role === "admin" && <AdminView />}
+//     </main>
+//   );
+// }
