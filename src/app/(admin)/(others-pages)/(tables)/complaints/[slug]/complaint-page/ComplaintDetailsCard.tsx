@@ -19,41 +19,41 @@ export default function ComplaintDetailsCard() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-              Address
+              Other Details
             </h4>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                 <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
                   <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                    Country
+                    Complaint Type
                   </p>
                   <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                    Pakistan
+                    Billing Issue
                   </p>
                 </div>
                 <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
                   <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                    City/State
+                    Priority
                   </p>
                   <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                    Lahore - Punjab
+                    High
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
                   <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                    Postal Code
+                    Assigned To
                   </p>
                   <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                    5009
+                    John Doe
                   </p>
                 </div>
                 <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
                   <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                    TAX ID
+                    Resolution Deadline
                   </p>
                   <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                  
+                    2024-07-15
                   </p>
                 </div>
             </div>
@@ -86,33 +86,33 @@ export default function ComplaintDetailsCard() {
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Address
+              Edit Other Details
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              Update complaint details to keep the record accurate.
             </p>
           </div>
           <form className="flex flex-col">
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
-                  <Label>Country</Label>
-                  <Input type="text" defaultValue="United States" />
+                  <Label>Complaint Type</Label>
+                  <Input type="text" defaultValue="Billing Issue" />
                 </div>
 
                 <div>
-                  <Label>City/State</Label>
-                  <Input type="text" defaultValue="Arizona, United States." />
+                  <Label>Priority</Label>
+                  <Input type="text" defaultValue="High" />
                 </div>
 
                 <div>
-                  <Label>Postal Code</Label>
-                  <Input type="text" defaultValue="ERT 2489" />
+                  <Label>Assigned To</Label>
+                  <Input type="text" defaultValue="John Doe" />
                 </div>
 
                 <div>
-                  <Label>TAX ID</Label>
-                  <Input type="text" defaultValue="AS4568384" />
+                  <Label>Resolution Deadline</Label>
+                  <Input type="date" defaultValue="2024-07-15" />
                 </div>
               </div>
             </div>
