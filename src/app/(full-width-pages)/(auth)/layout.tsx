@@ -21,7 +21,7 @@ export default function AuthLayout({
               {/* <!-- ===== Common Grid Shape Start ===== --> */}
               <GridShape />
               <div className="flex flex-col items-center max-w-xs">
-                <Link href="/" className="block mb-4">
+                <Link href="/" className="block">
                   <Image
                     width={128}
                     height={128}
@@ -29,8 +29,11 @@ export default function AuthLayout({
                     alt="Logo"
                   />
                 </Link>
+                <h3 className="text-3xl font-bold text-white mb-4">ComplaEase</h3>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  ComplaEase for Student Management.
+                  ComplaEase is your streamlined complaint management solution,
+                  designed to simplify tracking, resolution, and communication
+                  for both users and administrators.
                 </p>
               </div>
             </div>
