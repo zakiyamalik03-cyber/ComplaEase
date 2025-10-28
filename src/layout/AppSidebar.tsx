@@ -19,6 +19,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
+import { Megaphone, SquareKanban } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -32,6 +33,16 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     path: "/"
+  },
+  {
+    icon: <SquareKanban />,
+    name: "Progress",
+    path: "/progress"
+  },
+  {
+    icon: <Megaphone />,
+    name: "Announcements",
+    path: "/announcements"
   },
   {
     icon: <CalenderIcon />,
