@@ -1,5 +1,7 @@
 "use client";
 
+import ComponentCard from "@/components/common/ComponentCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useEffect, useState } from "react";
 
 type Status = "Open" | "In Progress" | "Resolved" | "Closed";
@@ -80,42 +82,46 @@ export default function Progress() {
   const columns: Status[] = ["Open", "In Progress", "Resolved", "Closed"];
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">Complaints</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {columns.map((status) => (
-          <div
-            key={status}
-            onDrop={(e) => handleDrop(e, status)}
-            onDragOver={handleDragOver}
-            className={`rounded-xl border-2 border-dashed p-4 ${statusColors[status]}`}
-          >
-            <h2 className="font-semibold text-lg mb-4">{status}</h2>
-            <div className="space-y-4">
-              {complaints
-                .filter((c) => c.status === status)
-                .map((c) => (
-                  <div
-                    key={c.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, c.id)}
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 cursor-move"
-                  >
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      {c.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{c.description}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                      <span>{c.createdAt}</span>
-                      <span>Assigned: {c.assignedTo}</span>
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <PageBreadcrumb pageTitle="Complaint Progress" />
+      <div className="space-y-6">
+        <ComponentCard title="Kanban View">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {columns.map((status) => (
+            <div
+              key={status}
+              onDrop={(e) => handleDrop(e, status)}
+              onDragOver={handleDragOver}
+              className={`rounded-xl border-2 border-dashed p-4 ${statusColors[status]}`}
+            >
+              <h2 className="font-semibold text-lg mb-4">{status}</h2>
+              <div className="space-y-4">
+                {complaints
+                  .filter((c) => c.status === status)
+                  .map((c) => (
+                    <div
+                      key={c.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, c.id)}
+                      className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-move"
+                    >
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                        {c.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{c.description}</p>
+                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <span>{c.createdAt}</span>
+                        <span>Assigned: {c.assignedTo}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        </ComponentCard>
       </div>
+
     </div>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import ComponentCard from "@/components/common/ComponentCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useState } from "react";
 
 type Announcement = {
@@ -37,14 +39,14 @@ const Label = ({ children, htmlFor, className = "" }: { children: React.ReactNod
 const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   <input
     {...props}
-    className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
+    className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-white/[0.03] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
   />
 );
 
 const Textarea = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     {...props}
-    className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
+    className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-white/[0.03] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
   />
 );
 
@@ -97,10 +99,12 @@ export default function AnnouncementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <PageBreadcrumb pageTitle="Announcemnets" />
+      <div className="space-y-6">
+        <ComponentCard title="Announcements"><div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left: Send Announcement Form */}
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-gray-100">
               Send Announcement
@@ -119,7 +123,7 @@ export default function AnnouncementPage() {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter announcement title"
                   required
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                  className="dark:bg-white/[0.03] dark:border-gray-600 dark:text-gray-100"
                 />
               </div>
               <div>
@@ -133,12 +137,12 @@ export default function AnnouncementPage() {
                   rows={6}
                   placeholder="Write your announcement here..."
                   required
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                  className="dark:bg-white/[0.03] dark:border-gray-600 dark:text-gray-100"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                className="w-full bg-brand-600 hover:bg-brand-700 dark:bg-brand-700 dark:hover:bg-brand-600"
               >
                 Send Announcement
               </Button>
@@ -147,7 +151,7 @@ export default function AnnouncementPage() {
         </Card>
 
         {/* Right: Previously Sent Announcements */}
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
+        <Card className="dark:bg-gray-900 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-gray-100">
               Previous Announcements
@@ -162,19 +166,19 @@ export default function AnnouncementPage() {
                   {announcements.map((ann) => (
                     <Card
                       key={ann.id}
-                      className="dark:bg-gray-900 dark:border-gray-700"
+                      className="dark:bg-white/[0.03] dark:border-gray-700 hover:bg-brand-50/20"
                     >
-                      <CardHeader className="pb-2">
+                      <CardHeader>
                         <div className="flex justify-between items-start">
                           <CardTitle className="text-base text-gray-800 dark:text-gray-100">
                             {ann.title}
                           </CardTitle>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-brand-500">
                             {ann.createdAt}
                           </span>
                         </div>
                       </CardHeader>
-                      <CardContent className="pt-0">
+                      <CardContent>
                         <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                           {ann.body}
                         </p>
@@ -186,6 +190,9 @@ export default function AnnouncementPage() {
             </ScrollArea>
           </CardContent>
         </Card>
+      </div>
+      </ComponentCard>
+
       </div>
     </div>
   );
