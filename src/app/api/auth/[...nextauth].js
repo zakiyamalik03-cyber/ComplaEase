@@ -1,15 +1,47 @@
-import NextAuth from "next-auth"
-import GithubProvider from "next-auth/providers/github"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import mysql from "mysql2/promise";
+
+const db = await mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "cms_db",
+});
 
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-    // ...add more providers here
-  ],
-}
+    CredentialsProvider({
+      name: "Credentials",
+      async authorize(credentials) {
+        const [rows] = await db.execute(
+          "SELECT * FROM users WHERE email = ? AND password = ?",
+          [credentials.email, credentials.password]
+        );
 
-export default NextAuth(authOptions)
+        const user = rows[0];
+        if (user) {
+          return { id: user.id, name: user.name, email: user.email, role: user.role };
+        }
+        return null;
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) token.role = user.role;
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.role = token.role;
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

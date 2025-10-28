@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import ComplaintActionsCard from "./complaint-page/ComplaintActionsCard";
-import ComplaintStatusCard from "./complaint-page/ComplaintStatusCard";
+import ComplaintFeeback from "./complaint-page/ComplaintFeeback";
 import ComplaintDetailsCard from "./complaint-page/ComplaintDetailsCard";
 
 export const metadata: Metadata = {
@@ -19,8 +19,8 @@ export default function ComplaintDetailPage() {
         </h3>
         <div className="space-y-6">
           <ComplaintActionsCard />
-          <ComplaintStatusCard />
           <ComplaintDetailsCard />
+          <ComplaintFeeback />
         </div>
       </div>
     </div>
