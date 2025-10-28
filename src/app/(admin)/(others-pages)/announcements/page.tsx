@@ -99,12 +99,12 @@ export default function AnnouncementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <PageBreadcrumb pageTitle="Announcemnets" />
+    <div className=" bg-gray-50 dark:bg-gray-900">
+      <PageBreadcrumb pageTitle="Announcements" />
       <div className="space-y-6">
         <ComponentCard title="Announcements"><div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left: Send Announcement Form */}
-        <Card className="dark:bg-gray-900 dark:border-gray-700">
+        <Card className="dark:bg-gray-900 dark:border-gray-700 h-fit">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-gray-100">
               Send Announcement

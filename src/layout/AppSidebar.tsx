@@ -19,7 +19,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { Megaphone, SquareKanban } from "lucide-react";
+import { BookUser, Megaphone, SquareKanban } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -58,7 +58,7 @@ const navItems: NavItem[] = [
   },
   {
     name: "Students",
-    icon: <TableIcon />,
+    icon: <BookUser />,
     path: "/students"
   },
   {
