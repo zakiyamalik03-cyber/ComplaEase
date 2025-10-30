@@ -1,9 +1,16 @@
-import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export default withAuth({
-  pages: {
-    signIn: '/login',
-  },
-});
+export function middleware(req) {
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization");
 
-export const config = { matcher: ["/", "/api/:path*"] };
+  // If no token, redirect to signin
+  if (!token && !req.nextUrl.pathname.startsWith("/signin")) {
+    return NextResponse.redirect(new URL("/signin", req.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/", "/dashboard/:path*"],
+};

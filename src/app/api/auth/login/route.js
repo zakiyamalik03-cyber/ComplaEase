@@ -3,21 +3,33 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function POST(req) {
-  const { email, password } = await req.json();
+  try {
+    const { email, password } = await req.json();
 
-  const [rows] = await db.execute("SELECT * FROM users WHERE email = ?", [email]);
-  const user = rows[0];
+    if (!email || !password)
+      return Response.json({ error: "All fields required" }, { status: 400 });
 
-  if (!user) return Response.json({ error: "Invalid email" }, { status: 400 });
+    const [rows] = await db.execute("SELECT * FROM users WHERE email = ?", [email]);
+    const user = rows[0];
 
-  const validPass = await bcrypt.compare(password, user.password);
-  if (!validPass) return Response.json({ error: "Invalid password" }, { status: 400 });
+    if (!user) return Response.json({ error: "Invalid email" }, { status: 400 });
 
-  const token = jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass) return Response.json({ error: "Invalid password" }, { status: 400 });
 
-  return Response.json({ token, user });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    return Response.json({
+      success: true,
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    return Response.json({ error: "Server error" }, { status: 500 });
+  }
 }
