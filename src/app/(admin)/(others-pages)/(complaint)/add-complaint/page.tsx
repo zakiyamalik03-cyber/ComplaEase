@@ -52,7 +52,7 @@ export default function AddComplaintPage() {
         // Simulate API call
         setTimeout(() => {
             alert("Complaint added successfully!");
-            router.push("/post-complaints");
+            router.push("/post-complaint");
         }, 1000);
     };
 
