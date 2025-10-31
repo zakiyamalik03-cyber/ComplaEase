@@ -18,11 +18,17 @@ export default function AddComplaintPage() {
     const [loading, setLoading] = useState(false);
 
     const category = [
+        { value: "academic", label: "Academic" },
+        { value: "facilities", label: "Facilities" },
+        { value: "finance", label: "Finance" },
+        { value: "hostel", label: "Hostel" },
+        { value: "transport", label: "Transport" },
         { value: "technical", label: "Technical" },
         { value: "billing", label: "Billing" },
         { value: "service", label: "Service" },
+        { value: "administrative", label: "Administrative" },
         { value: "product", label: "Product" },
-        { value: "other", label: "Other" },
+        { value: "other", label: "Other" }, 
     ];
     const priority = [
         { value: "low", label: "Low" },
@@ -37,16 +43,16 @@ export default function AddComplaintPage() {
         setLoading(true);
 
         // Basic validation
-        // if (!title.trim() || !description.trim() || !category) {
-        //     alert("Please fill in all required fields.");
-        //     setLoading(false);
-        //     return;
-        // }
+        if (!title.trim() || !description.trim() || !category) {
+            alert("Please fill in all required fields.");
+            setLoading(false);
+            return;
+        }
 
         // Simulate API call
         setTimeout(() => {
             alert("Complaint added successfully!");
-            router.push("/complaints");
+            router.push("/post-complaints");
         }, 1000);
     };
 
@@ -102,12 +108,6 @@ export default function AddComplaintPage() {
                                 className="dark:bg-dark-900"
                             />
 
-                        </div>
-
-                        {/* Status */}
-                        <div>
-                            <Label htmlFor="status">Status</Label>
-                            <Input defaultValue="Pending" disabled/>
                         </div>
 
                         {/* Actions */}

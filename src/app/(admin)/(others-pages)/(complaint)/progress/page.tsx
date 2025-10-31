@@ -4,7 +4,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useEffect, useState } from "react";
 
-type Status = "Open" | "In Progress" | "Resolved" | "Closed";
+type Status = "Open" | "In Progress" | "Resolved" | "Completed" | "Rejected";
 
 interface Complaint {
   id: string;
@@ -19,7 +19,8 @@ const statusColors: Record<Status, string> = {
   Open: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
   "In Progress": "bg-yellow-100/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
   Resolved: "bg-green-100/50 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-200",
-  Closed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
+  Completed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
+  Rejected: "bg-orange-100/50 border-orange-300 text-orange-800 dark:bg-orange-900/50 dark:border-orange-700 dark:text-orange-200",
 };
 
 export default function Progress() {
