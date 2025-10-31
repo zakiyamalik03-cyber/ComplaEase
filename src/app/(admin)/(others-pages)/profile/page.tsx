@@ -1,14 +1,10 @@
+"use client";
 import UserAddressCard from "@/components/user-profile/UserAddressCard";
 import UserInfoCard from "@/components/user-profile/UserInfoCard";
 import UserMetaCard from "@/components/user-profile/UserMetaCard";
-import { Metadata } from "next";
 import React from "react";
 
-export const metadata: Metadata = {
-  title: "Next.js Profile | ComplaEase - Next.js Dashboard Template",
-  description:
-    "This is Next.js Profile page for ComplaEase - Next.js Tailwind CSS Admin Dashboard Template",
-};
+// Metadata moved to layout file
 
 export default function Profile() {
   return (

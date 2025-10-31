@@ -5,21 +5,17 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
   BoxIconLine,
   CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
-import { BookUser, Megaphone, SquareKanban } from "lucide-react";
+// import SidebarWidget from "./SidebarWidget";
+import { BookUser, Megaphone, PlusIcon, SquareKanban } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -66,6 +62,7 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     path: "/complaints"
   },
+
   // {
   //   name: "Pages",
   //   icon: <PageIcon />,
@@ -75,7 +72,12 @@ const navItems: NavItem[] = [
   //   ],
   // },
 ];
-const accountItems: NavItem[] = [
+const complaintItems: NavItem[] = [
+    {
+    name: "Add Complaint",
+    icon: <PlusIcon />,
+    path: "/add-complaint"
+  },
   {
     icon: <BoxIconLine />,
     name: "Resolve Complaints",
@@ -363,12 +365,12 @@ const AppSidebar: React.FC = () => {
                   }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Accounts"
+                  "Complaints"
                 ) : (
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(accountItems, "main")}
+              {renderMenuItems(complaintItems, "main")}
             </div>
             <div className="">
               <h2

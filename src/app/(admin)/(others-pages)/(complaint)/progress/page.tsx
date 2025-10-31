@@ -4,7 +4,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useEffect, useState } from "react";
 
-type Status = "Open" | "In Progress" | "Resolved" | "Closed";
+type Status = "Open" | "In Progress" | "Resolved" | "Completed" | "Rejected";
 
 interface Complaint {
   id: string;
@@ -13,20 +13,37 @@ interface Complaint {
   status: Status;
   assignedTo: string;
   createdAt: string;
+  priority?: "Low" | "Medium" | "High";
+  category?: string;
 }
 
 const statusColors: Record<Status, string> = {
   Open: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
   "In Progress": "bg-yellow-100/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
   Resolved: "bg-green-100/50 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-200",
-  Closed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
+  Completed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
+  Rejected: "bg-orange-100/50 border-orange-300 text-orange-800 dark:bg-orange-900/50 dark:border-orange-700 dark:text-orange-200",
+};
+
+const priorityColors = {
+  Low: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  Medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+  High: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
 };
 
 export default function Progress() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newComplaint, setNewComplaint] = useState<Partial<Complaint>>({
+    title: "",
+    description: "",
+    assignedTo: "",
+    priority: "Medium",
+    category: "",
+  });
 
   useEffect(() => {
-    // Dummy data – replace with real fetch
+    // Enhanced dummy data
     setComplaints([
       {
         id: "1",
@@ -35,30 +52,38 @@ export default function Progress() {
         status: "Open",
         assignedTo: "John Doe",
         createdAt: "2024-06-01",
+        priority: "High",
+        category: "Maintenance",
       },
       {
         id: "2",
         title: "WiFi Issue",
-        description: "No internet connection",
+        description: "No internet connection in building A",
         status: "In Progress",
         assignedTo: "Jane Smith",
         createdAt: "2024-06-02",
+        priority: "Medium",
+        category: "IT",
       },
       {
         id: "3",
         title: "Leaky Faucet",
-        description: "Faucet in kitchen is leaking",
+        description: "Faucet in kitchen is leaking continuously",
         status: "Resolved",
         assignedTo: "Mike Ross",
         createdAt: "2024-06-03",
+        priority: "Low",
+        category: "Plumbing",
       },
       {
         id: "4",
         title: "Light Bulb Out",
         description: "Bulb in hallway needs replacement",
-        status: "Closed",
+        status: "Completed",
         assignedTo: "Rachel Green",
         createdAt: "2024-06-04",
+        priority: "Low",
+        category: "Electrical",
       },
     ]);
   }, []);
@@ -79,49 +104,180 @@ export default function Progress() {
     e.preventDefault();
   };
 
-  const columns: Status[] = ["Open", "In Progress", "Resolved", "Closed"];
+  const handleAddComplaint = () => {
+    if (newComplaint.title && newComplaint.description && newComplaint.assignedTo) {
+      const complaint: Complaint = {
+        id: Date.now().toString(),
+        title: newComplaint.title,
+        description: newComplaint.description,
+        status: "Open",
+        assignedTo: newComplaint.assignedTo,
+        createdAt: new Date().toISOString().split("T")[0],
+        priority: newComplaint.priority,
+        category: newComplaint.category,
+      };
+      setComplaints([...complaints, complaint]);
+      setNewComplaint({
+        title: "",
+        description: "",
+        assignedTo: "",
+        priority: "Medium",
+        category: "",
+      });
+      setShowAddModal(false);
+    }
+  };
+
+  const columns: Status[] = ["Open", "In Progress", "Resolved", "Completed", "Rejected"];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <PageBreadcrumb pageTitle="Complaint Progress" />
-      <div className="space-y-6">
-        <ComponentCard title="Kanban View">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {columns.map((status) => (
-            <div
-              key={status}
-              onDrop={(e) => handleDrop(e, status)}
-              onDragOver={handleDragOver}
-              className={`rounded-xl border-2 border-dashed p-4 ${statusColors[status]}`}
-            >
-              <h2 className="font-semibold text-lg mb-4">{status}</h2>
-              <div className="space-y-4">
-                {complaints
-                  .filter((c) => c.status === status)
-                  .map((c) => (
-                    <div
-                      key={c.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, c.id)}
-                      className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-move"
-                    >
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                        {c.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{c.description}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{c.createdAt}</span>
-                        <span>Assigned: {c.assignedTo}</span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          ))}
-        </div>
+      
+      {/* Enhanced Header with Search and Filters */}
+      <div className=" mt-6">
+        <ComponentCard title="Complaint Reports">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            {columns.map((status) => {
+              const count = complaints.filter((c) => c.status === status).length;
+              return (
+                <div key={status} className={`p-4 rounded-lg ${statusColors[status]} border`}>
+                  <div className="text-2xl font-bold">{count}</div>
+                  <div className="text-sm">{status}</div>
+                </div>
+              );
+            })}
+          </div>
         </ComponentCard>
       </div>
 
+      {/* Kanban Board */}
+      <div className="space-y-6 mt-6">
+        <ComponentCard title="Kanban Board">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {columns.map((status) => (
+              <div
+                key={status}
+                onDrop={(e) => handleDrop(e, status)}
+                onDragOver={handleDragOver}
+                className={`rounded-xl border-2 border-dashed p-4 min-h-96 ${statusColors[status]} transition-all hover:border-solid`}>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-lg">{status}</h2>
+                  <span className="bg-white/20 dark:bg-black/20 px-2 py-1 rounded-full text-xs">
+                    {complaints.filter((c) => c.status === status).length}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {complaints
+                    .filter((c) => c.status === status)
+                    .map((c) => (
+                      <div
+                        key={c.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, c.id)}
+                        className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-move hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                            {c.title}
+                          </h3>
+                          {c.priority && (
+                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c.priority]}`}>
+                              {c.priority}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                          {c.description}
+                        </p>
+                        {c.category && (
+                          <div className="flex items-center gap-1 mb-2">
+                            {/* <FiTag className="text-xs text-gray-400" /> */}
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {c.category}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1">
+                            {/* <FiCalendar className="text-xs" /> */}
+                            <span>{c.createdAt}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {/* <FiUser className="text-xs" /> */}
+                            <span>{c.assignedTo}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ComponentCard>
+      </div>
+
+      {/* Add Complaint Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              Add New Complaint
+            </h2>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Title"
+                value={newComplaint.title}
+                onChange={(e) => setNewComplaint({ ...newComplaint, title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+              <textarea
+                placeholder="Description"
+                value={newComplaint.description}
+                onChange={(e) => setNewComplaint({ ...newComplaint, description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 h-24 resize-none"
+              />
+              <input
+                type="text"
+                placeholder="Assigned To"
+                value={newComplaint.assignedTo}
+                onChange={(e) => setNewComplaint({ ...newComplaint, assignedTo: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+              <input
+                type="text"
+                placeholder="Category"
+                value={newComplaint.category}
+                onChange={(e) => setNewComplaint({ ...newComplaint, category: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+              <select
+                value={newComplaint.priority}
+                onChange={(e) => setNewComplaint({ ...newComplaint, priority: e.target.value as "Low" | "Medium" | "High" })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="Low">Low Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="High">High Priority</option>
+              </select>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleAddComplaint}
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Add Complaint
+              </button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
