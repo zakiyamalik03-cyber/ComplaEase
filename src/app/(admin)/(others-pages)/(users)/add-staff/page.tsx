@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -26,6 +26,17 @@ export default function AddStaffPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
 
+    // Auto-set image path when gender changes
+    useEffect(() => {
+        if (form.gender === "Male") {
+            setForm((prev) => ({ ...prev, image: "/images/male.jpg" }));
+        } else if (form.gender === "Female") {
+            setForm((prev) => ({ ...prev, image: "/images/female.jpg" }));
+        } else {
+            setForm((prev) => ({ ...prev, image: "" }));
+        }
+    }, [form.gender]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -40,6 +51,13 @@ export default function AddStaffPage() {
         setError("");
         setSuccess(false);
 
+        // Basic client-side validation
+        if (!form.name || !form.email || !form.password || !form.role || !form.department || !form.gender) {
+            setError("Please fill in all required fields.");
+            setLoading(false);
+            return;
+        }
+
         try {
             const res = await fetch("/api/admin/staff", {
                 method: "POST",
@@ -52,6 +70,7 @@ export default function AddStaffPage() {
                 throw new Error(data.message || "Failed to register staff");
             }
 
+            // Clear form after successful submission
             setForm({
                 name: "",
                 email: "",
@@ -171,12 +190,12 @@ export default function AddStaffPage() {
                                 />
                             </div>
                             <div>
-                                <Label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Role</Label>
+                                <Label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Gender</Label>
                                 <Select
                                     options={gender}
                                     placeholder="Select Gender"
-                                    defaultValue={form.role}
-                                    onChange={handleSelectChange("role")}
+                                    defaultValue={form.gender}
+                                    onChange={(value) => setForm((prev) => ({ ...prev, gender: value }))}
                                     className="dark:bg-dark-900"
                                 />
                             </div>
@@ -194,7 +213,7 @@ export default function AddStaffPage() {
                         </div>
                         <div className="flex items-center gap-4">
                             <Button disabled={loading}>
-                                {loading ? "Submitting..." : "Add Staff"}
+                                {loading ? "Submitting..." : "Add CMS Staff"}
                             </Button>
                             <Button
                                 variant="outline"
