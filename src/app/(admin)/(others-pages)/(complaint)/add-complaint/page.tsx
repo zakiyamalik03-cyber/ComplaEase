@@ -78,12 +78,10 @@ export default function AddComplaintPage() {
                         <div>
                             <Label htmlFor="description">Description *</Label>
                             <TextArea
-
                                 placeholder="Detailed description of the issue"
                                 rows={5}
                                 value={description}
-                                onChange={(value: string) => setDescription(value)}
-
+                                onChange={(value) => setDescription(value)}
                             />
                         </div>
 
