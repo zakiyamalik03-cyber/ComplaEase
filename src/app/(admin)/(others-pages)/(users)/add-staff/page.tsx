@@ -55,6 +55,18 @@ export default function AddStaffPage() {
         { value: "Staff", label: "Staff" },
         { value: "Manager", label: "Manager" },
     ]
+    const departments = [
+        { value: "Computer Science", label: "Computer Science" },
+        { value: "Business Administration", label: "Business Administration" },
+        { value: "Electrical Engineering", label: "Electrical Engineering" },
+        { value: "Mechanical Engineering", label: "Mechanical Engineering" },
+        { value: "Civil Engineering", label: "Civil Engineering" },
+        { value: "Mathematics", label: "Mathematics" },
+        { value: "Physics", label: "Physics" },
+        { value: "Chemistry", label: "Chemistry" },
+        { value: "Biology", label: "Biology" },
+        { value: "English Literature", label: "English Literature" },
+    ]
     const handleSelectChange = (value: string) => {
         console.log("Selected value:", value);
     };
@@ -104,18 +116,6 @@ export default function AddStaffPage() {
                         </div>
 
                         <div>
-                            <Label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Department</Label>
-                            <Input
-                                name="department"
-                                type="text"
-
-                                defaultValue={form.department}
-                                onChange={handleChange}
-                                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                            />
-                        </div>
-
-                        <div>
                             <Label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Phone Number</Label>
                             <Input
                                 name="phone"
@@ -124,6 +124,16 @@ export default function AddStaffPage() {
                                 defaultValue={form.phone}
                                 onChange={handleChange}
                                 className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                            />
+                        </div>
+
+                        <div>
+                            <Label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Department</Label>
+                            <Select
+                                options={departments}
+                                placeholder="Select Option"
+                                onChange={handleSelectChange}
+                                className="dark:bg-dark-900"
                             />
                         </div>
 
