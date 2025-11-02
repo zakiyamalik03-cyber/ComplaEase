@@ -1,14 +1,52 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useRouter } from "next/navigation";
 
+interface UserData {
+  name?: string;
+  email?: string;
+  image?: string;
+}
+
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // Get user data from localStorage on component mount
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUserData(parsedUser);
+        console.log("Loaded user data:", parsedUser); // Debug log
+      } else {
+        console.log("No user data found in localStorage");
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
+    
+    // Add event listener for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "user") {
+        try {
+          const newUserData = e.newValue ? JSON.parse(e.newValue) : null;
+          setUserData(newUserData);
+        } catch (error) {
+          console.error("Error handling storage change:", error);
+        }
+      }
+    };
+    
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
 function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
   e.stopPropagation();
@@ -30,6 +68,7 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       // Clear client-side auth state
       localStorage.removeItem("role");
       localStorage.removeItem("user");
+      setUserData(null);
 
       // Expire potential auth cookies (both names used in app)
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -42,6 +81,8 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       router.replace("/signin");
     }
   }
+  console.log("The USer Image is:", userData?.image);
+  
   return (
     <div className="relative">
       <button
@@ -52,12 +93,14 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
           <Image
             width={44}
             height={44}
-            src="/images/user/owner.jpg"
-            alt="User"
+            src={userData?.image || "/images/user/male.jpg"}
+            alt={userData?.name || "Anonymous User"}
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Muhammad Ali</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {userData?.name || "Anonymous User"}
+        </span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -86,10 +129,10 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Muhammad Ali Husnain
+            {userData?.name || "Anonymous User"}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            alihusnain@gmail.com
+            {userData?.email || "No email available"}
           </span>
         </div>
 
@@ -170,32 +213,73 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
             </DropdownItem>
           </li>
         </ul>
-        <button
-          onClick={() => {
-            handleLogout();
-            closeDropdown();
-          }}
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-red-400 w-full text-left"
-        >
-          <svg
-            className="fill-gray-500 group-hover:fill-red-600 dark:group-hover:fill-red-400"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        {userData ? (
+          <button
+            onClick={() => {
+              handleLogout();
+              closeDropdown();
+            }}
+            className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-red-400 w-full text-left"
           >
-            <path
-              d="M16.8 2H14.2C11 2 9 4 9 7.2V11.25H15.25C15.66 11.25 16 11.59 16 12C16 12.41 15.66 12.75 15.25 12.75H9V16.8C9 20 11 22 14.2 22H16.79C19.99 22 21.99 20 21.99 16.8V7.2C22 4 20 2 16.8 2Z"
-              fill="currentColor"
-            />
-            <path
-              d="M4.56 11.25L6.63 9.18C6.78 9.03 6.85 8.84 6.85 8.65C6.85 8.46 6.78 8.26 6.63 8.12C6.34 7.83 5.86 7.83 5.57 8.12L2.22 11.47C1.93 11.76 1.93 12.24 2.22 12.53L5.57 15.88C5.86 16.17 6.34 16.17 6.63 15.88C6.92 15.59 6.92 15.11 6.63 14.82L4.56 12.75H9V11.25H4.56Z"
-              fill="currentColor"
-            />
-          </svg>
-          Logout
-        </button>
+            <svg
+              className="fill-gray-500 group-hover:fill-red-600 dark:group-hover:fill-red-400"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16.8 2H14.2C11 2 9 4 9 7.2V11.25H15.25C15.66 11.25 16 11.59 16 12C16 12.41 15.66 12.75 15.25 12.75H9V16.8C9 20 11 22 14.2 22H16.79C19.99 22 21.99 20 21.99 16.8V7.2C22 4 20 2 16.8 2Z"
+                fill="currentColor"
+              />
+              <path
+                d="M4.56 11.25L6.63 9.18C6.78 9.03 6.85 8.84 6.85 8.65C6.85 8.46 6.78 8.26 6.63 8.12C6.34 7.83 5.86 7.83 5.57 8.12L2.22 11.47C1.93 11.76 1.93 12.24 2.22 12.53L5.57 15.88C5.86 16.17 6.34 16.17 6.63 15.88C6.92 15.59 6.92 15.11 6.63 14.82L4.56 12.75H9V11.25H4.56Z"
+                fill="currentColor"
+              />
+            </svg>
+            Logout
+          </button>
+        ) : (
+          <Link href="/signin">
+            <button
+              onClick={closeDropdown}
+              className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-blue-400 w-full text-left"
+            >
+              <svg
+                className="fill-gray-500 group-hover:fill-blue-600 dark:group-hover:fill-blue-400"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.90002 7.55999C9.21002 3.95999 11.06 2.48999 15.11 2.48999H15.24C19.71 2.48999 21.5 4.27999 21.5 8.74999V15.27C21.5 19.74 19.71 21.53 15.24 21.53H15.11C11.09 21.53 9.24002 20.08 8.91002 16.54"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M15 12H3.62"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5.85 8.6499L2.5 11.9999L5.85 15.3499"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Sign In
+            </button>
+          </Link>
+        )}
       </Dropdown>
     </div>
   );
