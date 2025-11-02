@@ -1,10 +1,9 @@
 import mysql from "mysql2/promise";
 
-// Create a connection pool instead of a single connection
 const dbConfig = {
   host: "localhost",
   user: "root",
-  password: "",     // your XAMPP password (default empty)
+  password: "", 
   database: "cms_db",
 };
 
