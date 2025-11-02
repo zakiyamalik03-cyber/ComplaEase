@@ -81,6 +81,11 @@ export default function AddStaffPage() {
                 gender: "",
                 image: ""
             });
+            
+            // Reset form fields in the DOM
+            const formElement = e.target as HTMLFormElement;
+            formElement.reset();
+            
             setSuccess(true);
         } catch (err: any) {
             setError(err.message);
