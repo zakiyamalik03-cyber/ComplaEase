@@ -1,62 +1,25 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useRouter } from "next/navigation";
-
-interface UserData {
-  name?: string;
-  email?: string;
-  image?: string;
-}
+import { useUser } from "@/hooks/useUser";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const { userData } = useUser();
   const router = useRouter();
-
-  useEffect(() => {
-    // Get user data from localStorage on component mount
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setUserData(parsedUser);
-        console.log("Loaded user data:", parsedUser); // Debug log
-      } else {
-        console.log("No user data found in localStorage");
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    }
-    
-    // Add event listener for storage changes
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "user") {
-        try {
-          const newUserData = e.newValue ? JSON.parse(e.newValue) : null;
-          setUserData(newUserData);
-        } catch (error) {
-          console.error("Error handling storage change:", error);
-        }
-      }
-    };
-    
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-  e.stopPropagation();
-  setIsOpen((prev) => !prev);
-}
+  function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }
 
   function closeDropdown() {
     setIsOpen(false);
   }
-  
+
   async function handleLogout() {
     try {
       // Call API to clear server-side auth cookie
@@ -68,7 +31,7 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       // Clear client-side auth state
       localStorage.removeItem("role");
       localStorage.removeItem("user");
-      setUserData(null);
+      // setUserData is not provided by useUser; remove this line
 
       // Expire potential auth cookies (both names used in app)
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -82,11 +45,11 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     }
   }
   console.log("The USer Image is:", userData?.image);
-  
+
   return (
     <div className="relative">
       <button
-        onClick={toggleDropdown} 
+        onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
@@ -103,9 +66,8 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         </span>
 
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
