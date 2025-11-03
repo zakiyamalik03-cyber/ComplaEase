@@ -64,7 +64,7 @@ export default function Home() {
   }
   
   if (!role) {
-    return null; // Router will handle redirection
+    return router.push("/signin"); // Router will handle redirection
   }
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">

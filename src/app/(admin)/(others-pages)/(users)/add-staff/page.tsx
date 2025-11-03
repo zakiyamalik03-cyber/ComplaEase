@@ -29,9 +29,9 @@ export default function AddStaffPage() {
     // Auto-set image path when gender changes
     useEffect(() => {
         if (form.gender === "Male") {
-            setForm((prev) => ({ ...prev, image: "/images/male.jpg" }));
+            setForm((prev) => ({ ...prev, image: "/images/user/male.jpg" }));
         } else if (form.gender === "Female") {
-            setForm((prev) => ({ ...prev, image: "/images/female.jpg" }));
+            setForm((prev) => ({ ...prev, image: "/images/user/female.jpg" }));
         } else {
             setForm((prev) => ({ ...prev, image: "" }));
         }
