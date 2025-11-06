@@ -35,6 +35,7 @@ export default function SignInForm() {
     if (res.ok && data.token) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.user.role);
+      localStorage.setItem("user", JSON.stringify(data.user));
       setMessage("✅ Login successful! Redirecting...");
       setTimeout(() => router.push("/"), 1000);
     } else {

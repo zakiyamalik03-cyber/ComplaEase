@@ -6,15 +6,19 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import Image from "next/image";
+import { useUser } from "@/hooks/useUser";
 
 
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
+  const { userData, loading } = useUser();
+  
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
     closeModal();
   };
+  
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -24,21 +28,21 @@ export default function UserMetaCard() {
               <Image
                 width={80}
                 height={80}
-                src="/images/user/owner.jpg"
-                alt="user"
+                src={userData?.image || "/images/user/male.jpg"}
+                alt={userData?.name || "User"}
               />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                Muhammad Ali Husnain
+                {loading ? "Loading..." : (userData?.name || "User")}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Administrator
+                  {userData?.role || "User"}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Lahore, Pakistan
+                  {userData?.department || "Department"}
                 </p>
               </div>
             </div>

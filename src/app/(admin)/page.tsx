@@ -19,13 +19,31 @@ export default function Home() {
     // Check for authentication
     const checkAuth = async () => {
       try {
-        // First try to get role from localStorage
-        const storedRole = localStorage.getItem("role");
+        // Get token from localStorage
+        const token = localStorage.getItem("token");
         
-        if (storedRole) {
-          setRole(storedRole);
+        if (!token) {
+          console.log("No token found, redirecting to signin");
+          router.push("/signin");
+          return;
+        }
+        
+        // Verify token with API
+        const response = await fetch("/api/users/me", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setRole(data.user.role);
         } else {
-          // If no role in localStorage, redirect to signin
+          console.log("Invalid token or session expired");
+          // Clear any invalid tokens
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+          localStorage.removeItem("user");
           router.push("/signin");
         }
       } catch (error) {
@@ -41,12 +59,12 @@ export default function Home() {
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
     </div>;
   }
   
   if (!role) {
-    return null; // Router will handle redirection
+    return router.push("/signin"); // Router will handle redirection
   }
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
