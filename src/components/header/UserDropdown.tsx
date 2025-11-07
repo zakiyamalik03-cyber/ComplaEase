@@ -44,7 +44,6 @@ export default function UserDropdown() {
       router.replace("/signin");
     }
   }
-  console.log("The USer Image is:", userData?.image);
 
   return (
     <div className="relative">
