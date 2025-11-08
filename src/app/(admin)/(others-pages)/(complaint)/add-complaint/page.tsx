@@ -25,13 +25,13 @@ export default function AddComplaintPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
 
-    const Creator = userData?.id || "2";
-    console.log("The User ID: ",Creator);
     useEffect(() => {
-        setCreatedBy(Creator);
-        setStatus("Pending")
-    }, []);
-
+        if (userData?.id) {
+            setCreatedBy(userData.id);
+            setStatus("Pending");
+            console.log("The User ID: ", userData.id);
+        }
+    }, [userData]);
     const categoryOptions = [
         { value: "academic", label: "Academic" },
         { value: "facilities", label: "Facilities" },
@@ -87,12 +87,13 @@ export default function AddComplaintPage() {
                 throw new Error(message || "Failed to post complaint");
             }
 
-            // Reset form
+            // Reset form state
             setTitle("");
             setCategory("");
             setPriority("low");
             setDescription("");
             setImage("");
+            setStatus("Pending"); // ensure status is reset to default
             setSuccess(true);
         } catch (err: any) {
             setError(err.message);
