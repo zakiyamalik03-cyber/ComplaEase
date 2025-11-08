@@ -9,52 +9,52 @@ export async function POST(req) {
       student_id,
       title,
       category,
-      priority = "low",
+      priority,
       description,
       status = "pending",
       image = null,
+      created_by,
       assigned_to = null,
     } = body;
 
     // Generate complaint_id (unique-ish) and set created_by to the student
-    const complaint_id = body.complaint_id || `CMP-${Date.now()}`;
-    const created_by = student_id;
+    const complaint_id = `CMP-${Date.now()}`;
     const normalizedStatus = (status || "pending").toLowerCase();
 
     // Validate basic required fields
-    if (!student_id || !title || !category || !description) {
+    if (!title || !category || !description) {
       return NextResponse.json(
-        { error: "Missing required fields: student_id, title, category, description" },
+        { error: "Missing required fields: title, category, description" },
         { status: 400 }
       );
     }
 
-    // Coerce IDs to numbers if users.id is numeric (common schema)
+    // Determine creator id: prefer provided created_by, else student_id
+    const creatorSource = created_by ?? student_id;
+    const createdByNum = Number(creatorSource);
     const studentIdNum = Number(student_id);
-    const createdByNum = Number(created_by);
-    if (Number.isNaN(studentIdNum) || Number.isNaN(createdByNum)) {
+    if (Number.isNaN(createdByNum)) {
       return NextResponse.json(
-        { error: "Invalid student_id: must be a numeric user id" },
+        { error: "Invalid created_by/student_id: must be a numeric user id" },
         { status: 400 }
       );
     }
 
-    // Verify user exists to satisfy FK constraints
+    // Verify the user exists to satisfy FK constraint
     const [userRows] = await db.execute("SELECT id FROM users WHERE id = ?", [createdByNum]);
     if (!Array.isArray(userRows) || userRows.length === 0) {
       return NextResponse.json(
-        { error: "User not found for provided student_id" },
+        { error: "User not found for provided created_by/student_id" },
         { status: 400 }
       );
     }
 
     // Perform insert (omit auto-increment id; set timestamps in DB)
     const [result] = await db.execute(
-      `INSERT INTO complaints (complaint_id, student_id, title, category, priority, description, status, image, created_by, assigned_to, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      `INSERT INTO complaints (complaint_id, title, category, priority, description, status, image, created_by, assigned_to, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [
         complaint_id,
-        studentIdNum,
         title,
         category,
         priority,

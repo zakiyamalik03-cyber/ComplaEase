@@ -25,8 +25,8 @@ export default function AddComplaintPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
 
-    const Creator = userData?.id || "No Found";
-    // console.log("The User ID: ",Creator);
+    const Creator = userData?.id || "2";
+    console.log("The User ID: ",Creator);
     useEffect(() => {
         setCreatedBy(Creator);
         setStatus("Pending")
@@ -69,6 +69,7 @@ export default function AddComplaintPage() {
 
         try {
             const res = await fetch("/api/complaint/add-complaint", {
+
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
