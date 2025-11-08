@@ -14,24 +14,22 @@ import Alert from "@/components/ui/alert/Alert";import { useUser } from "@/hooks
 export default function AddComplaintPage() {
     const router = useRouter();
     const { userData } = useUser();
-    // Use the logged-in user's id as student_id
-    
-    // Form fields for complaint
-    const [student_id, setStudentId] = useState("");
+    const [created_by, setCreatedBy] = useState("");
+    const [status, setStatus] = useState("");
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [priority, setPriority] = useState("low");
     const [description, setDescription] = useState("");
     const [image, setImage] = useState("");
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
 
-    // Simulate fetching logged-in user's id
+    const Creator = userData?.id || "No Found";
+    // console.log("The User ID: ",Creator);
     useEffect(() => {
-        const student = userData?.id || ''; // Example: fetch from session/context
-        setStudentId(student);
+        setCreatedBy(Creator);
+        setStatus("Pending")
     }, []);
 
     const categoryOptions = [
@@ -67,7 +65,7 @@ export default function AddComplaintPage() {
             return;
         }
 
-        const payload = { student_id, title, category, priority, description, image };
+        const payload = { title, category, priority, description, image, status, created_by};
 
         try {
             const res = await fetch("/api/complaint/add-complaint", {
