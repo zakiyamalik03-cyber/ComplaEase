@@ -18,83 +18,18 @@ interface Complaint {
   date: string;
 }
 
-// Define the table data using the interface
-const tableData: Complaint[] = [
-  {
-    id: 1,
-    user: {
-      image: "/images/user/user-17.jpg",
-      name: "Lindsey Curtis",
-      email: "lindsey@example.com",
-    },
-    category: "Technical",
-    subject: "Login Issue",
-    priority: "High",
-    status: "Open",
-    date: "2024-05-01",
-  },
-  {
-    id: 2,
-    user: {
-      image: "/images/user/user-18.jpg",
-      name: "Kaiya George",
-      email: "kaiya@example.com",
-    },
-    category: "Billing",
-    subject: "Refund Request",
-    priority: "Medium",
-    status: "In Progress",
-    date: "2024-05-02",
-  },
-  {
-    id: 3,
-    user: {
-      image: "/images/user/user-17.jpg",
-      name: "Zain Geidt",
-      email: "zain@example.com",
-    },
-    category: "General",
-    subject: "Feature Suggestion",
-    priority: "Low",
-    status: "Resolved",
-    date: "2024-05-03",
-  },
-  {
-    id: 4,
-    user: {
-      image: "/images/user/user-20.jpg",
-      name: "Abram Schleifer",
-      email: "abram@example.com",
-    },
-    category: "Technical",
-    subject: "Page Loading Error",
-    priority: "High",
-    status: "Closed",
-    date: "2024-05-04",
-  },
-  {
-    id: 5,
-    user: {
-      image: "/images/user/user-21.jpg",
-      name: "Carla George",
-      email: "carla@example.com",
-    },
-    category: "Account",
-    subject: "Password Reset",
-    priority: "Medium",
-    status: "Open",
-    date: "2024-05-05",
-  },
-];
+interface ComplaintsTableProps {
+  complaints: Complaint[];
+}
 
-export default function ComplaintsTable() {
+export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white `dark:border-white/[0.05] dark:bg-white/[0.03]`">
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-[1102px]">
           <Table>
             {/* Table Header */}
-            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+            <TableHeader className="border-b border-gray-100 `dark:border-white/[0.05]`">
               <TableRow>
                 <TableCell
                   isHeader
@@ -136,19 +71,19 @@ export default function ComplaintsTable() {
             </TableHeader>
 
             {/* Table Body */}
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {tableData.map((complaint) => (
+            <TableBody className="divide-y divide-gray-100 `dark:divide-white/[0.05]`">
+              {complaints.map((complaint) => (
                 <TableRow key={complaint.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                   <Link href={`/complaints/${complaint.id}`}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 overflow-hidden rounded-full">
-                        <Image
+                        {/* <Image
                           width={40}
                           height={40}
-                          src={complaint.user.image}
-                          alt={complaint.user.name}
-                        />
+                          src={complaint.user.image || "/images/user/user-02.jpg"}
+                          alt={complaint.user.name || "user-name"}
+                        /> */}
                       </div>
                       <div>
                         <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
