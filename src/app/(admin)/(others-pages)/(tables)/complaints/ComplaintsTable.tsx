@@ -3,20 +3,8 @@ import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
 import Link from "next/link";
+import { Complaint } from "@/types/global";
 
-interface Complaint {
-  id: number;
-  user: {
-    image: string;
-    name: string;
-    email: string;
-  };
-  category: string;
-  subject: string;
-  priority: string;
-  status: string;
-  date: string;
-}
 
 interface ComplaintsTableProps {
   complaints: Complaint[];

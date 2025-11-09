@@ -2,20 +2,10 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import { ComplaintForm, Status } from "@/types/global";
 import { useEffect, useState } from "react";
 
-type Status = "Open" | "In Progress" | "Resolved" | "Completed" | "Rejected";
 
-interface Complaint {
-  id: string;
-  title: string;
-  description: string;
-  status: Status;
-  assignedTo: string;
-  createdAt: string;
-  priority?: "Low" | "Medium" | "High";
-  category?: string;
-}
 
 const statusColors: Record<Status, string> = {
   Open: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
@@ -32,9 +22,9 @@ const priorityColors = {
 };
 
 export default function Progress() {
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [complaints, setComplaints] = useState<ComplaintForm[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newComplaint, setNewComplaint] = useState<Partial<Complaint>>({
+  const [newComplaint, setNewComplaint] = useState<Partial<ComplaintForm>>({
     title: "",
     description: "",
     assignedTo: "",
@@ -106,7 +96,7 @@ export default function Progress() {
 
   const handleAddComplaint = () => {
     if (newComplaint.title && newComplaint.description && newComplaint.assignedTo) {
-      const complaint: Complaint = {
+      const complaint: ComplaintForm = {
         id: Date.now().toString(),
         title: newComplaint.title,
         description: newComplaint.description,

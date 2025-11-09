@@ -2,23 +2,13 @@ import React from "react";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
+import { Student } from "@/types/global";
 
 
-interface Complaint {
-  id: number;
-  student: {
-    image: string;
-    name: string;
-    regNo: string;
-  };
-  title: string;
-  category: string;
-  status: string;
-  submittedAt: string;
-}
+
 
 // Define the table data using the interface
-const tableData: Complaint[] = [
+const tableData: Student[] = [
   {
     id: 1,
     student: {
