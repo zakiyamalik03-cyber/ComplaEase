@@ -5,29 +5,27 @@ const dbConfig = {
   user: "root",
   password: "",
   database: "cms_db",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 };
 
-export async function getConnection() {
-  try {
-    return await mysql.createConnection(dbConfig);
-  } catch (error) {
-    console.error("Failed to create database connection:", error);
-    if (process.env.NODE_ENV === "production") {
-      return null;
-    }
-    throw error;
+// Use a shared pool to avoid opening too many connections
+let pool;
+export function getPool() {
+  if (!pool) {
+    pool = mysql.createPool(dbConfig);
   }
+  return pool;
 }
 
 export const db = {
   query: async (...args) => {
-    const conn = await getConnection();
-    if (!conn) return [];
-    return conn.query(...args);
+    const p = getPool();
+    return p.query(...args);
   },
   execute: async (...args) => {
-    const conn = await getConnection();
-    if (!conn) return [];
-    return conn.execute(...args);
+    const p = getPool();
+    return p.execute(...args);
   },
 };

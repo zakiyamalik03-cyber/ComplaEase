@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import React from "react";
-import ComplaintActionsCard from "./complaint-page/ComplaintentDetails";
 import ComplaintFeeback from "./complaint-page/ComplaintFeeback";
-import { ComplaintDetail } from "@/types/global";
+import { ComplaintTableItem } from "@/types/global";
 import ComplaintDetailsCard from "./complaint-page/ComplaintDetailsCard";
+import ComplaintentDetails from "./complaint-page/ComplaintentDetails";
 
 export const metadata: Metadata = {
   title: "Complaint Details | ComplaEase - Admin Dashboard",
@@ -11,40 +11,31 @@ export const metadata: Metadata = {
     "Admin view for detailed complaint information and status management",
 };
 
-async function getComplaint(id: string): Promise<ComplaintDetail | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const complaintRes = await fetch(
-      `${baseUrl}/api/complaint/get-complaint/${id}`,
-      { cache: 'no-store' }
-    );
-
-    if (!complaintRes.ok) {
-      console.error(`Fetch failed with status ${complaintRes.status}`);
-      return null;
-    }
-
-    const complaintData = await complaintRes.json();
-
-    if (!complaintData?.success || !complaintData?.data) {
-      console.error('API response missing success or data');
-      return null;
-    }
-
-    return complaintData.data as ComplaintDetail;
-  } catch (error) {
-    console.error("Error fetching complaint:", error);
-    return null;
-  }
-}
-
-export default async function ComplaintDetailPage({ 
-  params 
-}: { 
-  params: { slug: string } 
+export default async function ComplaintDetailPage({
+  params,
+}: {
+  params: { slug: string };
 }) {
-  const complaint = await getComplaint(params.slug);
-  
+  const { slug } = params;
+
+  // 👇 Fetch from API route (server-side)
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
+
+  const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
+    cache: "no-store",
+  });
+  const result = await res.json();
+  const complaints: ComplaintTableItem[] = result?.data || [];
+  // console.log("the complaints ", complaints);
+
+  // Find the complaint by slug (ID)
+  const complaint = complaints.find((c) => c.complaint_id === slug);
+  console.log("the complaint: ", complaint);
+
   if (!complaint) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
@@ -64,9 +55,10 @@ export default async function ComplaintDetailPage({
         <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
           Complaint Details
         </h3>
+        
         <div className="space-y-6">
-          <ComplaintActionsCard user={complaint.user} />
-          <ComplaintDetailsCard complaint={complaint} />
+          <ComplaintentDetails user={complaint.user as any} />;
+          <ComplaintDetailsCard complaint={complaint as any} />
           <ComplaintFeeback />
         </div>
       </div>

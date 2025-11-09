@@ -40,6 +40,8 @@ export async function GET() {
          c.status,
          c.created_at,
          u.name AS user_name,
+         u.role AS user_role,
+         u.department AS user_department,
          u.email AS user_email,
          COALESCE(u.image, '') AS user_image
        FROM complaints c
@@ -55,13 +57,15 @@ export async function GET() {
         image: r.user_image || placeholderImage,
         name: r.user_name || "Unknown",
         email: r.user_email || "",
+        role: r.user_role || "",
+        department : r.user_department || "",
       },
       description: r.description || "",
       category: r.category || "",
       subject: r.title || "",
       priority: toTitleCase(r.priority || ""),
       status: mapStatus(r.status || ""),
-      date: r.created_at ? new Date(r.created_at).toISOString().split("T")[0] : "",
+      created_at: r.created_at ? new Date(r.created_at).toISOString().split("T")[0] : "",
     }));
 
     return NextResponse.json({ success: true, data: complaints }, { status: 200 });

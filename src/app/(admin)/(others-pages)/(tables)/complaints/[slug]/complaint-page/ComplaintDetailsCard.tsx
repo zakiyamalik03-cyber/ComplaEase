@@ -5,13 +5,10 @@ import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import React from "react";
-import { ComplaintDetail } from "@/types/global";
+import { Complaint } from "@/types/global";
 
-interface ComplaintDetailsCardProps {
-  complaint: ComplaintDetail;
-}
 
-export default function ComplaintDetailsCard({ complaint }: ComplaintDetailsCardProps) {
+export default function ComplaintDetailsCard({ complaint }: { complaint: Complaint }) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -67,7 +64,7 @@ export default function ComplaintDetailsCard({ complaint }: ComplaintDetailsCard
                 Title
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                {complaint.title}
+                {complaint.subject}
               </p>
             </div>
             <div>
@@ -91,9 +88,9 @@ export default function ComplaintDetailsCard({ complaint }: ComplaintDetailsCard
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Resolution Deadline
               </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+              {/* <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                 {complaint.resolution_deadline || 'Not Set'}
-              </p>
+              </p> */}
             </div>
 
             <div className="lg:col-span-2">

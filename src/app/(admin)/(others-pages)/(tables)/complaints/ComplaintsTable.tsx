@@ -131,7 +131,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-300">
-                    {complaint.date}
+                    {complaint.created_at}
                   </TableCell>
                 </TableRow>
               ))}

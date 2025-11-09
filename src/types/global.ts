@@ -6,19 +6,6 @@ export interface User {
     role: string;
     department: string;
 }
-
-export interface Complaint {
-  id: number;
-  title: string;
-  category: string;
-  priority: string;
-  status: string;
-  description: string;
-  image: string | null;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-}
 export interface Student {
   id: number;
   student: {
@@ -60,6 +47,8 @@ export interface ComplaintTableItem {
   user: {
     image: string;
     name: string;
+    role: string;
+    department: string;
     email: string;
   };
   description: string;
@@ -67,23 +56,25 @@ export interface ComplaintTableItem {
   subject: string;
   priority: string;
   status: Status;
+  image: string | null;
   assignedTo: string;
-  date: string;
-}
+  created_by: string;
+created_at: string;
+  updated_at: string;
 
-// Detail view model for single complaint page
-export interface ComplaintDetail {
+}
+export interface Complaint {
   id: number;
   complaint_id: string;
   title: string;
   description: string;
+  subject: string;
   category: string;
   priority: string;
-  status: Status;
+  status: string;
+  image: string | null;
+  assigned_to: string | null;
   created_by: string;
   created_at: string;
   updated_at: string;
-  assigned_to: string | null;
-  resolution_deadline: string | null;
-  user: User[];
 }
