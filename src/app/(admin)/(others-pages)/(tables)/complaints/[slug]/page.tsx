@@ -34,7 +34,7 @@ export default async function ComplaintDetailPage({
 
   // Find the complaint by slug (ID)
   const complaint = complaints.find((c) => c.complaint_id === slug);
-  console.log("the complaint: ", complaint);
+  // console.log("the complaint: ", complaint);
 
   if (!complaint) {
     return (
