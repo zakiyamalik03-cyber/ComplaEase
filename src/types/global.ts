@@ -29,7 +29,7 @@ export interface Student {
   status: string;
   submittedAt: string;
 }
-export type Status = "Open" | "In Progress" | "Resolved" | "Completed" | "Rejected";
+export type Status = "Pending" | "In Progress" | "Resolved" | "Completed" | "Rejected";
 export interface ComplaintForm {
   id: string;
   title: string;
@@ -49,4 +49,19 @@ export interface UserData {
   department?: string;
   image?: string;
   gender?: string;
+}
+
+// Table view model used by ComplaintsTable
+export interface ComplaintTableItem {
+  id: number;
+  user: {
+    image: string;
+    name: string;
+    email: string;
+  };
+  category: string;
+  subject: string;
+  priority: string;
+  status: string;
+  date: string;
 }

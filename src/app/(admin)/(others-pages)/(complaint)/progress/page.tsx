@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 
 const statusColors: Record<Status, string> = {
-  Open: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
+  Pending: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
   "In Progress": "bg-yellow-100/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
   Resolved: "bg-green-100/50 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-200",
   Completed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
@@ -39,7 +39,7 @@ export default function Progress() {
         id: "1",
         title: "Broken AC",
         description: "AC not working in room 301",
-        status: "Open",
+        status: "Pending",
         assignedTo: "John Doe",
         createdAt: "2024-06-01",
         priority: "High",
@@ -100,7 +100,7 @@ export default function Progress() {
         id: Date.now().toString(),
         title: newComplaint.title,
         description: newComplaint.description,
-        status: "Open",
+        status: "Pending",
         assignedTo: newComplaint.assignedTo,
         createdAt: new Date().toISOString().split("T")[0],
         priority: newComplaint.priority,
@@ -118,7 +118,7 @@ export default function Progress() {
     }
   };
 
-  const columns: Status[] = ["Open", "In Progress", "Resolved", "Completed", "Rejected"];
+  const columns: Status[] = ["Pending", "In Progress", "Resolved", "Completed", "Rejected"];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">

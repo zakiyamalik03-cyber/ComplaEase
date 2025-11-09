@@ -3,8 +3,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComplaintsTable from "./ComplaintsTable";
 import { Metadata } from "next";
 import React from "react";
-import { Complaint } from "@/types/global";
-import { User } from "next-auth";
+import { ComplaintTableItem } from "@/types/global";
 
 export const metadata: Metadata = {
   title: "Complaint List | ComplaEase ",
@@ -27,37 +26,14 @@ export default async function ComplaintsTables() {
     cache: "no-store",
   });
   const result = await res.json();
-  const complaints: Complaint[] = result?.data || [];
-
-  const res2 = await fetch(`${baseUrl}/api/users/getUsers`, {
-    cache: "no-store",
-  });
-  const resultUsers = await res2.json();
-  const users: User[] = resultUsers?.data || [];
-
-  const formattedComplaints = complaints.map((c) => {
-    const creator = users.find((u) => u.id === c.created_by) || {
-      image: "/images/default-avatar.png",
-      name: "Unknown",
-      email: "",
-    };
-    return {
-      id: c.id,
-      user: [creator],
-      category: c.category,
-      subject: c.title,
-      priority: c.priority,
-      status: c.status,
-      date: new Date(c.created_at).toLocaleDateString(),
-    };
-  });
+  const tableData: ComplaintTableItem[] = result?.data || [];
 
   return (
     <div>
       <PageBreadcrumb pageTitle="Complaint List" />
       <div className="space-y-6">
         <ComponentCard title="Complaint List">
-          <ComplaintsTable complaints={formattedComplaints} />
+          <ComplaintsTable complaints={tableData} />
         </ComponentCard>
       </div>
     </div>

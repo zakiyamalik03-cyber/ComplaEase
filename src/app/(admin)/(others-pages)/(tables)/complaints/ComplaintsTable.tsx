@@ -3,11 +3,11 @@ import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
 import Link from "next/link";
-import { Complaint } from "@/types/global";
+import { ComplaintTableItem } from "@/types/global";
 
 
 interface ComplaintsTableProps {
-  complaints: Complaint[];
+  complaints: ComplaintTableItem[];
 }
 
 export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
@@ -66,19 +66,19 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                   <Link href={`/complaints/${complaint.id}`}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 overflow-hidden rounded-full">
-                        {/* <Image
+                        <Image
                           width={40}
                           height={40}
-                          src={complaint.user.image || "/images/user/user-02.jpg"}
-                          alt={complaint.user.name || "user-name"}
-                        /> */}
+                          src={complaint.user?.image || "/images/user/user-02.jpg"}
+                          alt={complaint.user?.name || "user-name"}
+                        />
                       </div>
                       <div>
                         <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {complaint.user.name}
+                          {complaint.user?.name || "user-name"}
                         </span>
                         <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                          {complaint.user.email}
+                          {complaint.user?.email || "user-email"}
                         </span>
                       </div>
                     </div>
