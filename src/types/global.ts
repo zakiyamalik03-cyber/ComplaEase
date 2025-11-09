@@ -1,8 +1,10 @@
 export interface User {
   id: string;
-  image: string;
-  name: string;
-  email: string;
+    name: string;
+    email: string;
+    image: string;
+    role: string;
+    department: string;
 }
 
 export interface Complaint {
@@ -54,14 +56,34 @@ export interface UserData {
 // Table view model used by ComplaintsTable
 export interface ComplaintTableItem {
   id: number;
+  complaint_id: string;
   user: {
     image: string;
     name: string;
     email: string;
   };
+  description: string;
   category: string;
   subject: string;
   priority: string;
-  status: string;
+  status: Status;
+  assignedTo: string;
   date: string;
+}
+
+// Detail view model for single complaint page
+export interface ComplaintDetail {
+  id: number;
+  complaint_id: string;
+  title: string;
+  description: string;
+  category: string;
+  priority: string;
+  status: Status;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  assigned_to: string | null;
+  resolution_deadline: string | null;
+  user: User[];
 }

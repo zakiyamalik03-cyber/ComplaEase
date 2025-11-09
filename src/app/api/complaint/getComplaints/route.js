@@ -15,8 +15,7 @@ function mapStatus(status) {
   const s = String(status).toLowerCase();
   switch (s) {
     case "pending":
-    case "open":
-      return "Open";
+      return "Pending";
     case "in_progress":
     case "in progress":
       return "In Progress";
@@ -33,7 +32,9 @@ export async function GET() {
     const [rows] = await db.execute(
       `SELECT 
          c.id,
+         c.complaint_id,
          c.title,
+         c.description,
          c.category,
          c.priority,
          c.status,
@@ -49,11 +50,13 @@ export async function GET() {
     const placeholderImage = "/images/user/user-02.jpg";
     const complaints = (rows || []).map((r) => ({
       id: r.id,
+      complaint_id: r.complaint_id || "",
       user: {
         image: r.user_image || placeholderImage,
         name: r.user_name || "Unknown",
         email: r.user_email || "",
       },
+      description: r.description || "",
       category: r.category || "",
       subject: r.title || "",
       priority: toTitleCase(r.priority || ""),
