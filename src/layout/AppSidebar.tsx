@@ -15,7 +15,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 // import SidebarWidget from "./SidebarWidget";
-import { BookUser, FilePlus, Megaphone, SquareKanban, UserPlus } from "lucide-react";
+import { BookUser, FilePlus, Megaphone, SquareKanban, UserPlus, UsersRound } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -40,22 +40,27 @@ const navItems: NavItem[] = [
     name: "Announcements",
     path: "/announcements"
   },
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
+  // {
+  //   icon: <CalenderIcon />,
+  //   name: "Calendar",
+  //   path: "/calendar",
+  // },
 
 
-  {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
+  // {
+  //   name: "Forms",
+  //   icon: <ListIcon />,
+  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  // },
   {
     name: "Students",
     icon: <BookUser />,
     path: "/students"
+  },
+  {
+    name: "Staff",
+    icon: <UsersRound />,
+    path: "/staff"
   },
   {
     name: "Complaints",
