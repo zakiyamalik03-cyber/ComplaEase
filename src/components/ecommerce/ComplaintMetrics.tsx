@@ -3,8 +3,11 @@ import React from "react";
 import Badge from "../ui/badge/Badge";
 import {CircleCheckBig, ClipboardClock } from "lucide-react"
 import { AlertIcon, ArrowDownIcon, ArrowUpIcon, BoxIconLine } from "@/icons";
+import { Complaint } from "@/types/global";
 
-export const ComplaintMetrics = () => {
+
+export default function ComplaintMetrics({ complaints = [] }: { complaints: Complaint[] }){
+  
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
@@ -20,7 +23,7 @@ export const ComplaintMetrics = () => {
                 Total Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                782
+                {complaints.length}
               </h4>
             </div>
             <Badge color="success">
@@ -42,7 +45,7 @@ export const ComplaintMetrics = () => {
                 Completed Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                359
+                {complaints.filter((complaint) => complaint.status === "completed").length}
               </h4>
             </div>
 
@@ -67,7 +70,7 @@ export const ComplaintMetrics = () => {
                 Rejected Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                30
+                {complaints.filter((complaint) => complaint.status === "rejected").length}
               </h4>
             </div>
             <Badge color="success">
@@ -89,7 +92,7 @@ export const ComplaintMetrics = () => {
                 Pending Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                359
+                {complaints.filter((complaint) => complaint.status === "pending").length}
               </h4>
             </div>
 

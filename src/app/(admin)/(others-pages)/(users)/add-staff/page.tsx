@@ -140,7 +140,7 @@ export default function AddStaffPage() {
                             variant="success"
                             title="Staff Added"
                             message="The staff member has been successfully registered."
-                            showLink={true}
+                                showLink={true}
                             linkHref="/admin/users"
                             linkText="Go to Users"
                         />
