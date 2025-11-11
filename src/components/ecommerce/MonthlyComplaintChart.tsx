@@ -1,17 +1,18 @@
- "use client";
+"use client";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { MoreDotIcon } from "@/icons";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
+import { Complaint } from "@/types/global";
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function MonthlyComplaintChart() {
+export default function MonthlyComplaintChart({ complaints = [] }: { complaints: Complaint[] }) {
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
@@ -93,9 +94,21 @@ export default function MonthlyComplaintChart() {
   };
   const series = [
     {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: "Complaints",
+      data: Array.from({ length: 12 }, (_, i) => {
+        const month = i + 1;
+        return complaints.filter(c => {
+          const createdAt = new Date(c.created_at);
+          return createdAt.getMonth() + 1 === month;
+        }).length;
+      }),
     },
+    // {
+    //   name: "Sales",
+    //   // data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+    //   data: complaints.map(c => c.status === "Pending" ? 10 : 5),
+
+    // },
   ];
   const [isOpen, setIsOpen] = useState(false);
 

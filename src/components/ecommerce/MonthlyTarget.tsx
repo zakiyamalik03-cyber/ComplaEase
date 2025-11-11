@@ -7,13 +7,19 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { MoreDotIcon } from "@/icons";
 import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { Complaint } from "@/types/global";
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
-});
+ });
 
-export default function MonthlyTarget() {
-  const series = [75.55];
+export default function MonthlyTarget({ complaints = [] }: { complaints: Complaint[] }) {
+  // Compute monthly progress based on complaints
+  const totalComplaints = complaints.length;
+  const resolvedComplaints = complaints.filter(c => c.status === "resolved").length;
+  const progress = totalComplaints ? Math.round((resolvedComplaints / totalComplaints) * 100) : 0;
+
+  const series = [progress];
   const options: ApexOptions = {
     colors: ["#465FFF"],
     chart: {
@@ -207,3 +213,4 @@ export default function MonthlyTarget() {
     </div>
   );
 }
+
