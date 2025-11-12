@@ -45,7 +45,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
                 Completed Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {complaints.filter((complaint) => complaint.status === "completed").length}
+                {complaints.filter((complaint) => complaint.status === "Completed").length}
               </h4>
             </div>
 
@@ -70,7 +70,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
                 Rejected Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {complaints.filter((complaint) => complaint.status === "rejected").length}
+                {complaints.filter((complaint) => complaint.status === "Rejected").length}
               </h4>
             </div>
             <Badge color="success">
@@ -92,7 +92,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
                 Pending Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {complaints.filter((complaint) => complaint.status === "pending").length}
+                {complaints.filter((complaint) => complaint.status === "Pending").length}
               </h4>
             </div>
 
