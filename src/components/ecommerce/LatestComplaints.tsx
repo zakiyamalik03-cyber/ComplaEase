@@ -26,7 +26,7 @@ async function getComplaints() {
   return (result?.data || []) as ComplaintTableItem[];
 }
 
-export default function RankingEmployees() {
+export default function LatestComplaints() {
   const [complaints, setComplaints] = useState<ComplaintTableItem[]>([]);
 
   useEffect(() => {

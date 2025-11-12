@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import MonthlyComplaintChart from "@/components/ecommerce/MonthlyComplaintChart";
-import RankingEmployees from "@/components/ecommerce/RankingEmployees";
 import { useRouter } from "next/navigation";
 import ComplaintMetrics from "@/components/ecommerce/ComplaintMetrics";
 import { Complaint } from "@/types/global";
+import LatestComplaints from "@/components/ecommerce/LatestComplaints";
 
 export default function Home() {
   const [role, setRole] = useState<string | null>(null);
@@ -91,7 +91,7 @@ export default function Home() {
       </div>
 
       <div className="col-span-12 xl:col-span-12">
-        <RankingEmployees />
+        <LatestComplaints/>
       </div>
     </div>
   );
