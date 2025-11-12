@@ -38,11 +38,11 @@ export default function LatestComplaints() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Employee Rankings
+            Latest Complaints
           </h3>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             <svg
               className="stroke-current fill-white dark:fill-gray-800"
@@ -84,7 +84,7 @@ export default function LatestComplaints() {
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             See all
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -95,7 +95,7 @@ export default function LatestComplaints() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Employee
+                Complaintent
               </TableCell>
               <TableCell
                 isHeader
@@ -107,13 +107,19 @@ export default function LatestComplaints() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Resolved
+                Subject
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Performance
+                Assigned to
+              </TableCell>
+              <TableCell
+                isHeader
+                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Status
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -150,19 +156,24 @@ export default function LatestComplaints() {
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {complaint.subject}
                 </TableCell>
+                                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {complaint.assignedTo || "Not Assigned "}
+                </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
-                    size="sm"
-                    color={
-                      complaint.status === "Completed"
-                        ? "success"
-                        : complaint.status === "Rejected"
-                        ? "warning"
-                        : "error"
-                    }
-                  >
-                    {complaint.assignedTo}
-                  </Badge>
+                      size="sm"
+                      color={
+                        complaint.status === "Pending"
+                          ? "warning"
+                          : complaint.status === "In Process"
+                            ? "primary"
+                            : complaint.status === "Resolved"
+                              ? "success"
+                              : "error"
+                      }
+                    >
+                      {complaint.status}
+                    </Badge>
                 </TableCell>
               </TableRow>
             ))}
