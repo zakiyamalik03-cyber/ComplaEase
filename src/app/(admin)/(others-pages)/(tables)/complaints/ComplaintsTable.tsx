@@ -120,7 +120,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                       color={
                         complaint.status === "Pending"
                           ? "warning"
-                          : complaint.status === "In Progress"
+                          : complaint.status === "In Process"
                             ? "primary"
                             : complaint.status === "Resolved"
                               ? "success"
