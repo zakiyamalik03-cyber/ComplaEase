@@ -1,13 +1,39 @@
 "use client";
 import React from "react";
 import Badge from "../ui/badge/Badge";
-import {CircleCheckBig, ClipboardClock } from "lucide-react"
+import { CircleCheckBig, ClipboardClock } from "lucide-react"
 import { AlertIcon, ArrowDownIcon, ArrowUpIcon, BoxIconLine } from "@/icons";
 import { Complaint } from "@/types/global";
 
 
-export default function ComplaintMetrics({ complaints = [] }: { complaints: Complaint[] }){
-  
+export default function ComplaintMetrics({ complaints = [] }: { complaints: Complaint[] }) {
+  const report = (status: string | "") => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    const baseFilter = (c: Complaint) => {
+      const d = new Date(c.created_at);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    };
+
+    const prevBaseFilter = (c: Complaint) => {
+      const d = new Date(c.created_at);
+      return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+    };
+
+    const statusFilter = (c: Complaint) => (status ? c.status === status : true);
+
+    const currentMonthCount = complaints.filter(c => baseFilter(c) && statusFilter(c)).length;
+    const prevMonthCount = complaints.filter(c => prevBaseFilter(c) && statusFilter(c)).length;
+
+    if (prevMonthCount === 0) return currentMonthCount;
+    const change = ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
+    return `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
@@ -28,7 +54,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
             </div>
             <Badge color="success">
               <ArrowUpIcon />
-              11.01%
+              {report("")}
             </Badge>
           </div>
         </div>
@@ -51,7 +77,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
 
             <Badge color="error">
               <ArrowDownIcon className="text-error-500" />
-              9.05%
+              {report("Completed")}
             </Badge>
           </div>
         </div>
@@ -75,7 +101,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
             </div>
             <Badge color="success">
               <ArrowUpIcon />
-              11.01%
+              {report("Rejected")}
             </Badge>
           </div>
         </div>
@@ -98,7 +124,7 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
 
             <Badge color="error">
               <ArrowDownIcon className="text-error-500" />
-              9.05%
+              {report("Pending")}
             </Badge>
           </div>
         </div>
