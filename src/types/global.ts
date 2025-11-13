@@ -78,3 +78,16 @@ export interface Complaint {
   created_at: string;
   updated_at: string;
 }
+
+export type Announcement = {
+  id: number;
+  title: string;
+  message: string;
+  created_by: string;
+  createdAt: string;
+  creator: {
+    image: string;
+    name: string;
+    email: string;
+  };
+};
