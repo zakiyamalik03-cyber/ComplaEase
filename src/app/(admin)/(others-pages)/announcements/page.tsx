@@ -6,7 +6,7 @@ import Input from "@/components/form/input/InputField";
 import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
 import { useUser } from "@/hooks/useUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Announcement = {
   id: number;
@@ -36,6 +36,26 @@ export default function AnnouncementPage() {
 
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+  // Fetch announcements on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchAnnouncements() {
+      try {
+        const res = await fetch("/api/admin/announcements", {
+          headers: { "Connection": "keep-alive" },
+        });
+        if (!res.ok) throw new Error("Failed to fetch announcements");
+        const data: Announcement[] = await res.json();
+        if (!cancelled) setAnnouncements(data);
+      } catch (err) {
+        if (!cancelled) console.error(err);
+      }
+    }
+    fetchAnnouncements();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
