@@ -5,14 +5,12 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Input from "@/components/form/input/InputField";
 import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
+import Alert from "@/components/ui/alert/Alert";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { useUser } from "@/hooks/useUser";
 import { Announcement } from "@/types/global";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
-
-
 
 // Minimal UI components built from scratch using Tailwind only
 
@@ -37,6 +35,7 @@ export default function AnnouncementPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 
   // Fetch announcements on mount
   useEffect(() => {
@@ -52,7 +51,7 @@ export default function AnnouncementPage() {
       } catch (err) {
         if (!cancelled) console.error(err);
       } finally {
-        if (!cancelled) setLoading(false); // <-- stop loading when done
+        if (!cancelled) setLoading(false);
       }
     }
     fetchAnnouncements();
@@ -63,6 +62,7 @@ export default function AnnouncementPage() {
     e.preventDefault();
     if (!title.trim() || !message.trim()) return;
     setSubmitting(true);
+    setSubmitStatus("idle");
 
     try {
       const res = await fetch('/api/admin/announcements/postAnnouncement', {
@@ -91,9 +91,10 @@ export default function AnnouncementPage() {
       setAnnouncements([newAnnouncement, ...announcements]);
       setTitle("");
       setMessage("");
+      setSubmitStatus("success");
     } catch (err) {
       console.error(err);
-      // Optionally show user-facing error notification here
+      setSubmitStatus("error");
     } finally {
       setSubmitting(false);
     }
@@ -105,8 +106,14 @@ export default function AnnouncementPage() {
       <div className="space-y-6">
         <ComponentCard title="Announcements">
           <div className="max-w-5xl mx-auto flex flex-col lg:flex-row justify-around gap-8">
-            {/* Left: Send Announcement Form */}
             <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            {/* Left: Send Announcement Form */}
+            {submitStatus === "success" && (
+              <Alert variant="success" title="Success" message="Announcement posted successfully!" />
+            )}
+            {submitStatus === "error" && (
+              <Alert variant="error" title="Error" message="Failed to post announcement. Please try again." />
+            )}
               <div>
                 <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">
                   Title
@@ -148,7 +155,6 @@ export default function AnnouncementPage() {
               </Button>
             </form>
 
-
             {/* Right: Previously Sent Announcements */}
             <div className="border border-gray-200 rounded-2xl p-4 dark:border-gray-800 w-full">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Posted Announcements </h4>
@@ -165,7 +171,6 @@ export default function AnnouncementPage() {
                     {announcements.map((ann) => (
                       <div key={ann.id} className="border rounded-lg dark:border-gray-700 bg-white dark:bg-white/5">
                         <DropdownItem
-
                           className="flex gap-3 rounded-lg border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                         >
                           <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
@@ -207,10 +212,8 @@ export default function AnnouncementPage() {
                 </ScrollArea>
               )}
             </div>
-
           </div>
         </ComponentCard>
-
       </div>
     </div>
   );
