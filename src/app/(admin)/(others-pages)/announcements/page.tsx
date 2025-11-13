@@ -14,6 +14,10 @@ type Announcement = {
   message: string;
   created_by: string;
   createdAt: string;
+  creator: {
+    name: string;
+    email: string;
+  };
 };
 
 // Minimal UI components built from scratch using Tailwind only
@@ -78,6 +82,10 @@ export default function AnnouncementPage() {
         message: saved.message,
         created_by: saved.created_by,
         createdAt: saved.createdAt,
+        creator: {
+          name: saved?.creator?.name ?? "",
+          email: saved?.creator?.email ?? "",
+        },
       };
 
       setAnnouncements([newAnnouncement, ...announcements]);
@@ -139,9 +147,10 @@ export default function AnnouncementPage() {
                 <div className="space-y-4">
                   {announcements.map((ann) => (
                     <div key={ann.id} className="p-4 border rounded-md dark:border-gray-700">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">By: <span className="font-medium">{ann.creator?.name || ann.created_by}</span> {ann.creator?.email ? `(${ann.creator.email})` : ""}</p>
                       <h3 className="font-semibold text-gray-800 dark:text-gray-100">{ann.title}</h3>
                       <p className="text-gray-600 dark:text-gray-300 mt-1">{ann.message}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">By: {ann.created_by} • {ann.createdAt}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{ann.createdAt}</p>
                     </div>
                   ))}
                 </div>
