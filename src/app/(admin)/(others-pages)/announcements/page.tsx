@@ -43,6 +43,7 @@ export default function AnnouncementPage() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [loading, setLoading] = useState(true); // <-- added loading state
 
   // Fetch announcements on mount
   useEffect(() => {
@@ -57,6 +58,8 @@ export default function AnnouncementPage() {
         if (!cancelled) setAnnouncements(data);
       } catch (err) {
         if (!cancelled) console.error(err);
+      } finally {
+        if (!cancelled) setLoading(false); // <-- stop loading when done
       }
     }
     fetchAnnouncements();
@@ -142,15 +145,20 @@ export default function AnnouncementPage() {
 
 
             {/* Right: Previously Sent Announcements */}
-            <div>
-
-              {announcements.length === 0 ? (
+            <div className="border border-gray-200 rounded-2xl p-4 dark:border-gray-800">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Posted Announcements </h4>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="ml-3 text-gray-600 dark:text-gray-400">Loading announcements...</span>
+                </div>
+              ) : announcements.length === 0 ? (
                 <p className="text-gray-500 dark:text-gray-400">No announcements yet.</p>
               ) : (
-                <ScrollArea className="max-h-[28rem] pr-2">
+                <ScrollArea className="max-h-[28rem]">
                   <div className="space-y-4">
                     {announcements.map((ann) => (
-                      <div key={ann.id} className="p-4 border rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                      <div key={ann.id} className="p-4 border rounded-lg dark:border-gray-700 bg-white dark:bg-white/5 shadow-sm">
                         <div className="flex items-start gap-4">
                           <Image
                             src={ann.creator.image || "/avatar-placeholder.png"}
