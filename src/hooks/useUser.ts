@@ -1,16 +1,6 @@
 "use client";
+import { UserData } from '@/types/global';
 import { useState, useEffect } from 'react';
-
-interface UserData {
-  id?: string;
-  name?: string;
-  email?: string;
-  role?: string;
-  phone?: string;
-  department?: string;
-  image?: string;
-  gender?: string;
-}
 
 export function useUser() {
   const [userData, setUserData] = useState<UserData | null>(null);

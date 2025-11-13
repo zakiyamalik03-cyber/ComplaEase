@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -7,78 +9,40 @@ import {
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
+import { ComplaintTableItem } from "@/types/global";
+import { useEffect, useState } from "react";
 
-// Define the TypeScript interface for the table rows
-interface Employee {
-  id: number; // Unique identifier for each employee
-  name: string; // Employee name
-  department: string; // University department
-  position: string; // Job title/role
-  resolvedComplaints: number; // Number of complaints resolved
-  image: string; // URL or path to the employee image
-  performance: "Excellent" | "Good" | "Average"; // Performance rating
+async function getComplaints() {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
+
+  const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
+    cache: "no-store",
+  });
+  const result = await res.json();
+  return (result?.data || []) as ComplaintTableItem[];
 }
 
-// Define the table data using the interface
-const tableData: Employee[] = [
-  {
-    id: 1,
-    name: "Dr. Alice Johnson",
-    department: "Computer Science",
-    position: "Associate Professor",
-    resolvedComplaints: 45,
-    performance: "Excellent",
-    image: "/images/user/user-01.jpg", // Replace with actual image URL
-  },
-  {
-    id: 2,
-    name: "Michael Smith",
-    department: "Mechanical Engineering",
-    position: "Lab Coordinator",
-    resolvedComplaints: 32,
-    performance: "Good",
-    image: "/images/user/user-02.jpg", // Replace with actual image URL
-  },
-  {
-    id: 3,
-    name: "Sophia Lee",
-    department: "Business Administration",
-    position: "Department Secretary",
-    resolvedComplaints: 50,
-    performance: "Excellent",
-    image: "/images/user/user-03.jpg", // Replace with actual image URL
-  },
-  {
-    id: 4,
-    name: "James Brown",
-    department: "Electrical Engineering",
-    position: "Technician",
-    resolvedComplaints: 18,
-    performance: "Average",
-    image: "/images/user/user-04.jpg", // Replace with actual image URL
-  },
-  {
-    id: 5,
-    name: "Emma Wilson",
-    department: "Psychology",
-    position: "Assistant Professor",
-    resolvedComplaints: 40,
-    performance: "Good",
-    image: "/images/user/user-05.jpg", // Replace with actual image URL
-  },
-];
+export default function LatestComplaints() {
+  const [complaints, setComplaints] = useState<ComplaintTableItem[]>([]);
 
-export default function RankingEmployees() {
+  useEffect(() => {
+    getComplaints().then(setComplaints);
+  }, []);
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Ranked Employees
+            Latest Complaints
           </h3>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             <svg
               className="stroke-current fill-white dark:fill-gray-800"
@@ -120,7 +84,7 @@ export default function RankingEmployees() {
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             See all
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -131,7 +95,7 @@ export default function RankingEmployees() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Employee
+                Complaintent
               </TableCell>
               <TableCell
                 isHeader
@@ -143,13 +107,19 @@ export default function RankingEmployees() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Resolved
+                Subject
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Performance
+                Assigned to
+              </TableCell>
+              <TableCell
+                isHeader
+                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
+                Status
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -157,48 +127,53 @@ export default function RankingEmployees() {
           {/* Table Body */}
 
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tableData.map((employee) => (
-              <TableRow key={employee.id} className="">
+            {complaints.slice(0,10).map((complaint) => (
+              <TableRow key={complaint.id} className="">
                 <TableCell className="py-3">
                   <div className="flex items-center gap-3">
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
                       <Image
                         width={50}
                         height={50}
-                        src={employee.image}
+                        src={complaint.user.image}
                         className="h-[50px] w-[50px]"
-                        alt={employee.name}
+                        alt={complaint.user.name}
                       />
                     </div>
                     <div>
                       <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {employee.name}
+                        {complaint.user.name}
                       </p>
                       <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                        {employee.position}
+                        {complaint.user.email}
                       </span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {employee.department}
+                  {complaint.user.department}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {employee.resolvedComplaints}
+                  {complaint.subject}
+                </TableCell>
+                                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {complaint.assignedTo || "Not Assigned "}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
-                    size="sm"
-                    color={
-                      employee.performance === "Excellent"
-                        ? "success"
-                        : employee.performance === "Average"
-                        ? "warning"
-                        : "error"
-                    }
-                  >
-                    {employee.performance}
-                  </Badge>
+                      size="sm"
+                      color={
+                        complaint.status === "Pending"
+                          ? "warning"
+                          : complaint.status === "In Process"
+                            ? "primary"
+                            : complaint.status === "Resolved"
+                              ? "success"
+                              : "error"
+                      }
+                    >
+                      {complaint.status}
+                    </Badge>
                 </TableCell>
               </TableRow>
             ))}
@@ -208,4 +183,3 @@ export default function RankingEmployees() {
     </div>
   );
 }
-999999

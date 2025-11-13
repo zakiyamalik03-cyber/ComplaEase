@@ -5,8 +5,10 @@ import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import React from "react";
+import { Complaint } from "@/types/global";
 
-export default function ComplaintDetailsCard() {
+
+export default function ComplaintDetailsCard({ complaint }: { complaint: Complaint }) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -27,7 +29,7 @@ export default function ComplaintDetailsCard() {
                 Complaint ID
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                CMP-2025-001
+                {complaint.complaint_id}
               </p>
             </div>
 
@@ -36,7 +38,7 @@ export default function ComplaintDetailsCard() {
                 Status
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                In Progress
+                {complaint.status}
               </p>
             </div>
 
@@ -45,7 +47,7 @@ export default function ComplaintDetailsCard() {
                 Priority
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                High
+                {complaint.priority}
               </p>
             </div>
 
@@ -54,15 +56,15 @@ export default function ComplaintDetailsCard() {
                 Category
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Infrastructure
+                {complaint.category}
               </p>
             </div>
             <div >
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Complaint Type
+                Title
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                Billing Issue
+                {complaint.subject}
               </p>
             </div>
             <div>
@@ -79,16 +81,16 @@ export default function ComplaintDetailsCard() {
                 Assigned To
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                John Doe
+                {complaint.assigned_to || 'Not Assigned'}
               </p>
             </div>
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Resolution Deadline
               </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                2024-07-15
-              </p>
+              {/* <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                {complaint.resolution_deadline || 'Not Set'}
+              </p> */}
             </div>
 
             <div className="lg:col-span-2">
@@ -96,7 +98,7 @@ export default function ComplaintDetailsCard() {
                 Description
               </p>
               <p className=" font-medium text-gray-800 dark:text-white/90">
-                Water leakage in the main lobby ceiling causing slippery floors and potential electrical hazard.
+                {complaint.description}
               </p>
             </div>
           </div>
@@ -145,22 +147,22 @@ export default function ComplaintDetailsCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
                     <Label>Complaint ID</Label>
-                    <Input type="text" defaultValue="CMP-2025-001" />
+                    <Input type="text" defaultValue={complaint.complaint_id} />
                   </div>
 
                   <div>
                     <Label>Status</Label>
-                    <Input type="text" defaultValue="In Progress" />
+                    <Input type="text" defaultValue={complaint.status} />
                   </div>
 
                   <div>
                     <Label>Priority</Label>
-                    <Input type="text" defaultValue="High" />
+                    <Input type="text" defaultValue={complaint.priority} />
                   </div>
 
                   <div>
                     <Label>Category</Label>
-                    <Input type="text" defaultValue="Infrastructure" />
+                    <Input type="text" defaultValue={complaint.category} />
                   </div>
                 </div>
               </div>
@@ -173,9 +175,9 @@ export default function ComplaintDetailsCard() {
                   <div className="col-span-2">
                     <Label>Description</Label>
                     <Input
-                      type="text"
-                      defaultValue="Water leakage in the main lobby ceiling causing slippery floors and potential electrical hazard."
-                    />
+                    type="text"
+                    defaultValue={complaint.description}
+                  />
                   </div>
                 </div>
               </div>

@@ -7,7 +7,7 @@ import { UserData } from "@/types/global";
 interface StudentsTableProps {
   students?: UserData[] | null;
 }
-export default function StudentsTable({ students = [] }: StudentsTableProps) {
+export default function StaffTable({ students = [] }: StudentsTableProps) {
   const safeStudents = Array.isArray(students) ? students : [];  
 
   return (

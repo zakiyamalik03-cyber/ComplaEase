@@ -2,13 +2,13 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import React from "react";
-import StudentsTable from "./StudentsTable";
+import StudentsTable from "./StaffTable";
 import { UserData } from "@/types/global";
 
 export const metadata: Metadata = {
-  title: "Students Table | ComplaEase ",
+  title: "Staff | ComplaEase ",
   description:
-    "This is Next.js Students Table page for ComplaEase Tailwind CSS Admin Dashboard",
+    "This is Next.js Staff page for ComplaEase Admin Dashboard",
   // other metadata
 };
 
@@ -26,10 +26,10 @@ export default async function StudentsTables() {
   const users: UserData[] = result?.data || [];
   return (
     <div>
-      <PageBreadcrumb pageTitle="Students Table" />
+      <PageBreadcrumb pageTitle="Staff" />
       <div className="space-y-6">
-        <ComponentCard title="Students Table">
-          <StudentsTable students={users.filter(u => u.role === "Student")} />
+        <ComponentCard title="Staff Table">
+          <StudentsTable students={users.filter(u => u.role === "Staff")} />
         </ComponentCard>
       </div>
     </div>

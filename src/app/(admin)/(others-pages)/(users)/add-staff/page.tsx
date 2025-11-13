@@ -81,11 +81,11 @@ export default function AddStaffPage() {
                 gender: "",
                 image: ""
             });
-            
+
             // Reset form fields in the DOM
             const formElement = e.target as HTMLFormElement;
             formElement.reset();
-            
+
             setSuccess(true);
         } catch (err: any) {
             setError(err.message);
@@ -126,13 +126,21 @@ export default function AddStaffPage() {
             <PageBreadcrumb pageTitle="Add Staff" />
             <div className="space-y-6">
                 <ComponentCard title="Add Staff">
-                    {error && <div className="mb-4 text-red-600 dark:text-red-400">{error}</div>}
+                    {error && (<Alert
+                        variant="error"
+                        title="Error"
+                        message={error}
+                        showLink={false}
+                        linkHref=""
+                        linkText=""
+                    />
+                    )}
                     {success && (
                         <Alert
                             variant="success"
                             title="Staff Added"
                             message="The staff member has been successfully registered."
-                            showLink={true}
+                                showLink={true}
                             linkHref="/admin/users"
                             linkText="Go to Users"
                         />
