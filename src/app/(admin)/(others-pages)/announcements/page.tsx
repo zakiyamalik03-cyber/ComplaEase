@@ -147,21 +147,44 @@ export default function AnnouncementPage() {
               {announcements.length === 0 ? (
                 <p className="text-gray-500 dark:text-gray-400">No announcements yet.</p>
               ) : (
-                <div className="space-y-4">
-                  {announcements.map((ann) => (
-                    <div key={ann.id} className="p-4 border rounded-md dark:border-gray-700 capitalize">
-                      <div>
-                        <Image src={ann.creator.image} alt={ann.creator.name} width={50} height={50} className="rounded-full" />
+                <ScrollArea className="max-h-[28rem] pr-2">
+                  <div className="space-y-4">
+                    {announcements.map((ann) => (
+                      <div key={ann.id} className="p-4 border rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                        <div className="flex items-start gap-4">
+                          <Image
+                            src={ann.creator.image || "/avatar-placeholder.png"}
+                            alt={ann.creator.name || "User"}
+                            width={48}
+                            height={48}
+                            className="rounded-full object-cover"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className=" text-gray-800 dark:text-gray-100">
+                                {ann.creator?.name || ann.created_by}
+                              </span>
+                              <span className="text-gray-500 dark:text-gray-400">
+                                {(() => {
+                                  const created = new Date(ann.createdAt);
+                                  const now = new Date();
+                                  const diffMs = now.getTime() - created.getTime();
+                                  const diffMins = Math.floor(diffMs / 60000);
+                                  const diffHrs = Math.floor(diffMins / 60);
+                                  if (diffMins < 1) return "Just now";
+                                  if (diffMins < 60) return `${diffMins} min ago`;
+                                  return `${diffHrs} hr ago`;
+                                })()}
+                              </span>
+                            </div>
+                            <h3 className="mt-1 text-base font-semibold text-gray-900 dark:text-gray-50 capitalize">{ann.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap capitalize">{ann.message}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-gray-600 dark:text-gray-100">{ann.creator?.name || ann.created_by}</p>
-                        <h3 className="font-semibold text-gray-800 dark:text-gray-100">{ann.title}</h3>
-                        <p className="text-gray-600 dark:text-gray-300 mt-1">{ann.message}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{ann.createdAt}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               )}
             </div>
 
