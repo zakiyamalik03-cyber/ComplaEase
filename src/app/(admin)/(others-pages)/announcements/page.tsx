@@ -143,7 +143,7 @@ export default function AnnouncementPage() {
                     Posting...
                   </>
                 ) : (
-                  "Send Announcement"
+                  "Post Announcement"
                 )}
               </Button>
             </form>
