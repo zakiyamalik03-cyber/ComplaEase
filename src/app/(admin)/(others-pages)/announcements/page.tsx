@@ -6,6 +6,7 @@ import Input from "@/components/form/input/InputField";
 import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
 import { useUser } from "@/hooks/useUser";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type Announcement = {
@@ -15,6 +16,7 @@ type Announcement = {
   created_by: string;
   createdAt: string;
   creator: {
+    image: string;
     name: string;
     email: string;
   };
@@ -83,6 +85,7 @@ export default function AnnouncementPage() {
         created_by: saved.created_by,
         createdAt: saved.createdAt,
         creator: {
+          image: saved?.creator?.image ?? "",
           name: saved?.creator?.name ?? "",
           email: saved?.creator?.email ?? "",
         },
@@ -146,11 +149,16 @@ export default function AnnouncementPage() {
               ) : (
                 <div className="space-y-4">
                   {announcements.map((ann) => (
-                    <div key={ann.id} className="p-4 border rounded-md dark:border-gray-700">
-                      <p className="text-sm text-gray-600 dark:text-gray-300">By: <span className="font-medium">{ann.creator?.name || ann.created_by}</span> {ann.creator?.email ? `(${ann.creator.email})` : ""}</p>
-                      <h3 className="font-semibold text-gray-800 dark:text-gray-100">{ann.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 mt-1">{ann.message}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{ann.createdAt}</p>
+                    <div key={ann.id} className="p-4 border rounded-md dark:border-gray-700 capitalize">
+                      <div>
+                        <Image src={ann.creator.image} alt={ann.creator.name} width={50} height={50} className="rounded-full" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-600 dark:text-gray-100">{ann.creator?.name || ann.created_by}</p>
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-100">{ann.title}</h3>
+                        <p className="text-gray-600 dark:text-gray-300 mt-1">{ann.message}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{ann.createdAt}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
