@@ -19,12 +19,23 @@ export async function POST(request) {
       [title, message, creatorIdNum]
     );
 
+    // Fetch creator details to include in response
+    const [uRows] = await db.execute(
+      'SELECT name, email FROM users WHERE id = ?',
+      [creatorIdNum]
+    );
+    const creator = {
+      name: uRows?.[0]?.name ?? '',
+      email: uRows?.[0]?.email ?? '',
+    };
+
     const response = {
       id: result?.insertId,
       title,
       message,
       created_by: String(creatorIdNum),
       createdAt: new Date().toISOString(),
+      creator,
     };
 
     return NextResponse.json(response, { status: 201 });
