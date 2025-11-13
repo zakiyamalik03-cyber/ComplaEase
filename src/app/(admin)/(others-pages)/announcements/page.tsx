@@ -36,6 +36,7 @@ export default function AnnouncementPage() {
   const [message, setMessage] = useState("");
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // Fetch announcements on mount
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function AnnouncementPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !message.trim()) return;
+    setSubmitting(true);
 
     try {
       const res = await fetch('/api/admin/announcements/postAnnouncement', {
@@ -92,6 +94,8 @@ export default function AnnouncementPage() {
     } catch (err) {
       console.error(err);
       // Optionally show user-facing error notification here
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -129,9 +133,18 @@ export default function AnnouncementPage() {
                 />
               </div>
               <Button
+                type="submit"
+                disabled={submitting}
                 className="w-full bg-brand-600 hover:bg-brand-700 dark:bg-brand-700 dark:hover:bg-brand-600"
               >
-                Send Announcement
+                {submitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block mr-2"></div>
+                    Posting...
+                  </>
+                ) : (
+                  "Send Announcement"
+                )}
               </Button>
             </form>
 
@@ -169,8 +182,8 @@ export default function AnnouncementPage() {
                             <span className="mb-1.5 capitalize space-x-1 block text-theme-sm text-gray-500 dark:text-gray-400">
                               <span className=" font-medium text-gray-800 dark:text-white/90">
                                 {ann.title}
-                              </span>
-                              <span className="capitalize">{ann.message}</span>
+                              </span> | 
+                              <span className="ml-1.5 capitalize">{ann.message}</span>
                             </span>
                             <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
                               <span>{ann.creator.name}</span>
