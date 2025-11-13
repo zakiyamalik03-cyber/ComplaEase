@@ -16,9 +16,9 @@ function mapStatus(status) {
   switch (s) {
     case "pending":
       return "Pending";
-    case "in_progress":
-    case "in progress":
-      return "In Progress";
+    case "in_process":
+    case "In_process":
+      return "In Process";
     case "resolved":
     case "closed":
       return "Resolved";

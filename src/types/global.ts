@@ -18,7 +18,7 @@ export interface Student {
   status: string;
   submittedAt: string;
 }
-export type Status = "Pending" | "In Progress" | "Resolved" | "Completed" | "Rejected";
+export type Status = "Pending" | "In Process" | "Resolved" | "Completed" | "Rejected";
 export interface ComplaintForm {
   id: string;
   title: string;
