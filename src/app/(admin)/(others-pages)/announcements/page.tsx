@@ -5,22 +5,14 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Input from "@/components/form/input/InputField";
 import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
+import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { useUser } from "@/hooks/useUser";
+import { Announcement } from "@/types/global";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-type Announcement = {
-  id: number;
-  title: string;
-  message: string;
-  created_by: string;
-  createdAt: string;
-  creator: {
-    image: string;
-    name: string;
-    email: string;
-  };
-};
+
+
 
 // Minimal UI components built from scratch using Tailwind only
 
@@ -43,7 +35,7 @@ export default function AnnouncementPage() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [loading, setLoading] = useState(true); // <-- added loading state
+  const [loading, setLoading] = useState(true);
 
   // Fetch announcements on mount
   useEffect(() => {
@@ -108,9 +100,9 @@ export default function AnnouncementPage() {
       <PageBreadcrumb pageTitle="Announcements" />
       <div className="space-y-6">
         <ComponentCard title="Announcements">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row justify-around gap-8">
             {/* Left: Send Announcement Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 w-full">
               <div>
                 <Label htmlFor="title" className="text-gray-700 dark:text-gray-300">
                   Title
@@ -145,8 +137,8 @@ export default function AnnouncementPage() {
 
 
             {/* Right: Previously Sent Announcements */}
-            <div className="border border-gray-200 rounded-2xl p-4 dark:border-gray-800">
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Posted Announcements </h4>
+            <div className="border border-gray-200 rounded-2xl p-4 dark:border-gray-800 w-full">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Posted Announcements </h4>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -158,37 +150,44 @@ export default function AnnouncementPage() {
                 <ScrollArea className="max-h-[28rem]">
                   <div className="space-y-4">
                     {announcements.map((ann) => (
-                      <div key={ann.id} className="p-4 border rounded-lg dark:border-gray-700 bg-white dark:bg-white/5 shadow-sm">
-                        <div className="flex items-start gap-4">
-                          <Image
-                            src={ann.creator.image || "/avatar-placeholder.png"}
-                            alt={ann.creator.name || "User"}
-                            width={48}
-                            height={48}
-                            className="rounded-full object-cover"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className=" text-gray-800 dark:text-gray-100">
-                                {ann.creator?.name || ann.created_by}
+                      <div key={ann.id} className="border rounded-lg dark:border-gray-700 bg-white dark:bg-white/5">
+                        <DropdownItem
+
+                          className="flex gap-3 rounded-lg border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
+                        >
+                          <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
+                            <Image
+                              width={40}
+                              height={40}
+                              src={ann.creator.image || "/images/user/user-01.jpg"}
+                              alt="User"
+                              className="w-full overflow-hidden rounded-full"
+                            />
+                            <span className="absolute bottom-0 right-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white bg-success-500 dark:border-gray-900"></span>
+                          </span>
+                          <span className="block">
+                            <span className="mb-1.5 capitalize space-x-1 block text-theme-sm text-gray-500 dark:text-gray-400">
+                              <span className=" font-medium text-gray-800 dark:text-white/90">
+                                {ann.title}
                               </span>
-                              <span className="text-gray-500 dark:text-gray-400">
-                                {(() => {
-                                  const created = new Date(ann.createdAt);
-                                  const now = new Date();
-                                  const diffMs = now.getTime() - created.getTime();
-                                  const diffMins = Math.floor(diffMs / 60000);
-                                  const diffHrs = Math.floor(diffMins / 60);
-                                  if (diffMins < 1) return "Just now";
-                                  if (diffMins < 60) return `${diffMins} min ago`;
-                                  return `${diffHrs} hr ago`;
-                                })()}
-                              </span>
-                            </div>
-                            <h3 className="mt-1 text-base font-semibold text-gray-900 dark:text-gray-50 capitalize">{ann.title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap capitalize">{ann.message}</p>
-                          </div>
-                        </div>
+                              <span className="capitalize">{ann.message}</span>
+                            </span>
+                            <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
+                              <span>{ann.creator.name}</span>
+                              <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                              <span>{(() => {
+                                const created = new Date(ann.createdAt);
+                                const now = new Date();
+                                const diffMs = now.getTime() - created.getTime();
+                                const diffMins = Math.floor(diffMs / 60000);
+                                const diffHrs = Math.floor(diffMins / 60);
+                                if (diffMins < 1) return "Just now";
+                                if (diffMins < 60) return `${diffMins} min ago`;
+                                return `${diffHrs} hr ago`;
+                              })()}</span>
+                            </span>
+                          </span>
+                        </DropdownItem>
                       </div>
                     ))}
                   </div>
