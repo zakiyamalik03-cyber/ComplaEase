@@ -22,6 +22,8 @@ function mapStatus(status) {
     case "resolved":
     case "closed":
       return "Resolved";
+    case "completed":
+      return "Resolved";
     default:
       return toTitleCase(s);
   }

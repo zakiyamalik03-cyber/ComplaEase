@@ -69,7 +69,7 @@ export async function PATCH(request) {
         case "closed":
           return "Resolved";
         case "completed":
-          return "Completed";
+          return "Resolved";
         case "rejected":
           return "Rejected";
         default:

@@ -187,7 +187,7 @@ export default function Progress() {
     }
   };
 
-  const columns: Status[] = ["Pending", "In Process", "Resolved", "Completed", "Rejected"];
+  const columns: Status[] = ["Pending", "In Process", "Resolved", "Rejected"];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -196,7 +196,7 @@ export default function Progress() {
       {/* Enhanced Header with Search and Filters */}
       <div className=" mt-6">
         <ComponentCard title="Complaint Reports">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {columns.map((status) => {
               const count = complaints.filter((c) => c.status === status).length;
               return (
@@ -213,7 +213,7 @@ export default function Progress() {
       {/* Kanban Board */}
       <div className="space-y-6 mt-6">
         <ComponentCard title="Kanban Board">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {columns.map((status) => (
               <div
                 key={status}
