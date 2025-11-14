@@ -2,7 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { ComplaintForm, ComplaintTableItem, Status } from "@/types/global";
+import { ComplaintTableItem, Status } from "@/types/global";
 import { useEffect, useState } from "react";
 
 const statusColors: Record<Status, string> = {
@@ -19,11 +19,37 @@ const priorityColors = {
   High: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
 };
 
+function timeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + "yr ago";
+
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + "mo ago";
+
+  interval = seconds / 604800;
+  if (interval > 1) return Math.floor(interval) + "wk ago";
+
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + "d ago";
+
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + "hr ago";
+
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + "min ago";
+
+  return "just now";
+}
+
 export default function Progress() {
-  const [complaints, setComplaints] = useState<ComplaintForm[]>([]);
+  const [complaints, setComplaints] = useState<ComplaintTableItem[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newComplaint, setNewComplaint] = useState<Partial<ComplaintForm>>({
-    title: "",
+  const [newComplaint, setNewComplaint] = useState<Partial<ComplaintTableItem>>({
+    subject: "",
     description: "",
     assignedTo: "",
     priority: "Medium",
@@ -44,7 +70,7 @@ export default function Progress() {
         });
         const result = await res.json();
         const complaintData: ComplaintTableItem[] = result?.data || [];
-        setComplaints(complaintData as unknown as ComplaintForm[]);
+        setComplaints(complaintData);
       } catch (error) {
         console.error("Failed to fetch complaints:", error);
       }
@@ -90,10 +116,10 @@ export default function Progress() {
     const id = e.dataTransfer.getData("text/plain");
 
     // Capture previous status for rollback on failure
-    const previousStatus = complaints.find((c) => c.id === id)?.status;
+    const previousStatus = complaints.find((c) => String(c.id) === id)?.status;
 
     // Optimistically update UI
-    setComplaints((prev) => prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c)));
+    setComplaints((prev) => prev.map((c) => (String(c.id) === id ? { ...c, status: newStatus } : c)));
 
     // Persist change to backend
     (async () => {
@@ -115,7 +141,7 @@ export default function Progress() {
         console.error("Failed to update complaint status:", error);
         // Rollback UI change if request failed
         if (previousStatus) {
-          setComplaints((prev) => prev.map((c) => (c.id === id ? { ...c, status: previousStatus } : c)));
+          setComplaints((prev) => prev.map((c) => (String(c.id) === id ? { ...c, status: previousStatus } : c)));
         }
       }
     })();
@@ -126,20 +152,28 @@ export default function Progress() {
   };
 
   const handleAddComplaint = () => {
-    if (newComplaint.title && newComplaint.description && newComplaint.assignedTo) {
-      const complaint: ComplaintForm = {
-        id: Date.now().toString(),
-        title: newComplaint.title,
+    if (newComplaint.subject && newComplaint.description && newComplaint.assignedTo) {
+      const complaint: ComplaintTableItem = {
+        id: Date.now(),
+        complaint_id: String(Date.now()),
+        subject: newComplaint.subject,
         description: newComplaint.description,
         status: "Pending",
         assignedTo: newComplaint.assignedTo,
-        createdAt: new Date().toISOString().split("T")[0],
-        priority: newComplaint.priority,
-        category: newComplaint.category,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        priority: newComplaint.priority || "Medium",
+        category: newComplaint.category || "",
+        name: newComplaint.user?.name || "Unknown",
+        image: newComplaint.user?.image || "",
+        created_by: newComplaint.created_by || "no",
+        title: newComplaint.subject,
+        createdAt: new Date().toISOString(),
       };
+
       setComplaints([...complaints, complaint]);
       setNewComplaint({
-        title: "",
+        subject: "",
         description: "",
         assignedTo: "",
         priority: "Medium",
@@ -195,14 +229,14 @@ export default function Progress() {
                       <div
                         key={c.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, c.id)}
+                        onDragStart={(e) => handleDragStart(e, String(c.id))}
                         className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-move hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-                            {c.title}
+                            {c.subject}
                           </h3>
                           {c.priority && (
-                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c.priority]}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c?.priority || "Medium"]}`}>
                               {c.priority}
                             </span>
                           )}
@@ -219,12 +253,17 @@ export default function Progress() {
                         )}
                         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                           <div className="flex items-center gap-1">
-                            <span>{c.createdAt}</span>
+                            <span>{timeAgo(c.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span>{c.assignedTo}</span>
+                            <span>{c.assignedTo || "Unassigned"}</span>
                           </div>
                         </div>
+                        {c.user.name && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            By: {c.user.name}
+                          </div>
+                        )}
                       </div>
                     ))}
                 </div>
@@ -245,8 +284,8 @@ export default function Progress() {
               <input
                 type="text"
                 placeholder="Title"
-                value={newComplaint.title}
-                onChange={(e) => setNewComplaint({ ...newComplaint, title: e.target.value })}
+                value={newComplaint.subject}
+                onChange={(e) => setNewComplaint({ ...newComplaint, subject: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <textarea
