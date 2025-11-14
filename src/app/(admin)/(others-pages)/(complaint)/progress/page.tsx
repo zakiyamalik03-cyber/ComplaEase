@@ -2,14 +2,12 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { ComplaintForm, Status } from "@/types/global";
+import { ComplaintTableItem, Status } from "@/types/global";
 import { useEffect, useState } from "react";
-
-
 
 const statusColors: Record<Status, string> = {
   Pending: "bg-red-100/50 border-red-300 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200",
-  "In Progress": "bg-yellow-100/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
+  "In Process": "bg-yellow-100/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
   Resolved: "bg-green-100/50 border-green-300 text-green-800 dark:bg-green-900/50 dark:border-green-700 dark:text-green-200",
   Completed: "bg-gray-100/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
   Rejected: "bg-orange-100/50 border-orange-300 text-orange-800 dark:bg-orange-900/50 dark:border-orange-700 dark:text-orange-200",
@@ -21,11 +19,37 @@ const priorityColors = {
   High: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
 };
 
+function timeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + "yr ago";
+
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + "mo ago";
+
+  interval = seconds / 604800;
+  if (interval > 1) return Math.floor(interval) + "wk ago";
+
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + "d ago";
+
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + "hr ago";
+
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + "min ago";
+
+  return "just now";
+}
+
 export default function Progress() {
-  const [complaints, setComplaints] = useState<ComplaintForm[]>([]);
+  const [complaints, setComplaints] = useState<ComplaintTableItem[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newComplaint, setNewComplaint] = useState<Partial<ComplaintForm>>({
-    title: "",
+  const [newComplaint, setNewComplaint] = useState<Partial<ComplaintTableItem>>({
+    subject: "",
     description: "",
     assignedTo: "",
     priority: "Medium",
@@ -33,61 +57,94 @@ export default function Progress() {
   });
 
   useEffect(() => {
-    // Enhanced dummy data
-    setComplaints([
-      {
-        id: "1",
-        title: "Broken AC",
-        description: "AC not working in room 301",
-        status: "Pending",
-        assignedTo: "John Doe",
-        createdAt: "2024-06-01",
-        priority: "High",
-        category: "Maintenance",
-      },
-      {
-        id: "2",
-        title: "WiFi Issue",
-        description: "No internet connection in building A",
-        status: "In Progress",
-        assignedTo: "Jane Smith",
-        createdAt: "2024-06-02",
-        priority: "Medium",
-        category: "IT",
-      },
-      {
-        id: "3",
-        title: "Leaky Faucet",
-        description: "Faucet in kitchen is leaking continuously",
-        status: "Resolved",
-        assignedTo: "Mike Ross",
-        createdAt: "2024-06-03",
-        priority: "Low",
-        category: "Plumbing",
-      },
-      {
-        id: "4",
-        title: "Light Bulb Out",
-        description: "Bulb in hallway needs replacement",
-        status: "Completed",
-        assignedTo: "Rachel Green",
-        createdAt: "2024-06-04",
-        priority: "Low",
-        category: "Electrical",
-      },
-    ]);
+    async function fetchComplaints() {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+
+      try {
+        const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
+          cache: "no-store",
+        });
+        const result = await res.json();
+        const complaintData: ComplaintTableItem[] = result?.data || [];
+        setComplaints(complaintData);
+      } catch (error) {
+        console.error("Failed to fetch complaints:", error);
+      }
+    }
+
+    fetchComplaints();
+  }, []);
+
+  // Subscribe to real-time complaint updates via SSE
+  useEffect(() => {
+    const es = new EventSource("/api/complaint/updates");
+
+    es.onmessage = (event) => {
+      try {
+        const update = JSON.parse(event.data);
+        const updateId = String(update?.id ?? "");
+        const displayStatus = update?.displayStatus as Status | undefined;
+        if (!updateId || !displayStatus) return;
+
+        setComplaints((prev) =>
+          prev.map((c) => (String(c.id) === updateId ? { ...c, status: displayStatus } : c))
+        );
+      } catch (err) {
+        console.error("SSE parse error:", err);
+      }
+    };
+
+    es.onerror = (err) => {
+      console.error("SSE connection error:", err);
+    };
+
+    return () => {
+      es.close();
+    };
   }, []);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: string) => {
-    e.dataTransfer.setData("text/plain", id);
+    e.dataTransfer.setData("text/plain", String(id));
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, newStatus: Status) => {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain");
-    setComplaints((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
-    );
+
+    // Capture previous status for rollback on failure
+    const previousStatus = complaints.find((c) => String(c.id) === id)?.status;
+
+    // Optimistically update UI
+    setComplaints((prev) => prev.map((c) => (String(c.id) === id ? { ...c, status: newStatus } : c)));
+
+    // Persist change to backend
+    (async () => {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+      try {
+        const res = await fetch(`${baseUrl}/api/complaint/update-status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, status: newStatus }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Status update failed: ${res.status}`);
+        }
+      } catch (error) {
+        console.error("Failed to update complaint status:", error);
+        // Rollback UI change if request failed
+        if (previousStatus) {
+          setComplaints((prev) => prev.map((c) => (String(c.id) === id ? { ...c, status: previousStatus } : c)));
+        }
+      }
+    })();
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -95,20 +152,28 @@ export default function Progress() {
   };
 
   const handleAddComplaint = () => {
-    if (newComplaint.title && newComplaint.description && newComplaint.assignedTo) {
-      const complaint: ComplaintForm = {
-        id: Date.now().toString(),
-        title: newComplaint.title,
+    if (newComplaint.subject && newComplaint.description && newComplaint.assignedTo) {
+      const complaint: ComplaintTableItem = {
+        id: Date.now(),
+        complaint_id: String(Date.now()),
+        subject: newComplaint.subject,
         description: newComplaint.description,
         status: "Pending",
         assignedTo: newComplaint.assignedTo,
-        createdAt: new Date().toISOString().split("T")[0],
-        priority: newComplaint.priority,
-        category: newComplaint.category,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        priority: newComplaint.priority || "Medium",
+        category: newComplaint.category || "",
+        name: newComplaint.user?.name || "Unknown",
+        image: newComplaint.user?.image || "",
+        created_by: newComplaint.created_by || "no",
+        title: newComplaint.subject,
+        createdAt: new Date().toISOString(),
       };
+
       setComplaints([...complaints, complaint]);
       setNewComplaint({
-        title: "",
+        subject: "",
         description: "",
         assignedTo: "",
         priority: "Medium",
@@ -118,7 +183,7 @@ export default function Progress() {
     }
   };
 
-  const columns: Status[] = ["Pending", "In Progress", "Resolved", "Completed", "Rejected"];
+  const columns: Status[] = ["Pending", "In Process", "Resolved", "Completed", "Rejected"];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -164,14 +229,14 @@ export default function Progress() {
                       <div
                         key={c.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, c.id)}
+                        onDragStart={(e) => handleDragStart(e, String(c.id))}
                         className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 cursor-move hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-                            {c.title}
+                            {c.subject}
                           </h3>
                           {c.priority && (
-                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c.priority]}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c?.priority || "Medium"]}`}>
                               {c.priority}
                             </span>
                           )}
@@ -181,7 +246,6 @@ export default function Progress() {
                         </p>
                         {c.category && (
                           <div className="flex items-center gap-1 mb-2">
-                            {/* <FiTag className="text-xs text-gray-400" /> */}
                             <span className="text-xs text-gray-500 dark:text-gray-400">
                               {c.category}
                             </span>
@@ -189,14 +253,17 @@ export default function Progress() {
                         )}
                         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                           <div className="flex items-center gap-1">
-                            {/* <FiCalendar className="text-xs" /> */}
-                            <span>{c.createdAt}</span>
+                            <span>{timeAgo(c.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            {/* <FiUser className="text-xs" /> */}
-                            <span>{c.assignedTo}</span>
+                            <span>{c.assignedTo || "Unassigned"}</span>
                           </div>
                         </div>
+                        {c.user.name && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            By: {c.user.name}
+                          </div>
+                        )}
                       </div>
                     ))}
                 </div>
@@ -217,8 +284,8 @@ export default function Progress() {
               <input
                 type="text"
                 placeholder="Title"
-                value={newComplaint.title}
-                onChange={(e) => setNewComplaint({ ...newComplaint, title: e.target.value })}
+                value={newComplaint.subject}
+                onChange={(e) => setNewComplaint({ ...newComplaint, subject: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <textarea
