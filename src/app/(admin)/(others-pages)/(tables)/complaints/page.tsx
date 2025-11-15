@@ -4,7 +4,7 @@ import ComplaintsTable from "./ComplaintsTable";
 import { Metadata } from "next";
 import React from "react";
 import { ComplaintTableItem } from "@/types/global";
-
+0
 export const metadata: Metadata = {
   title: "Complaint List | ComplaEase ",
   description:

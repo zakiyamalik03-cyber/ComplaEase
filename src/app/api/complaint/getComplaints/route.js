@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import jwt from "jsonwebtoken";
 
 function toTitleCase(str) {
   if (!str) return "";
@@ -29,8 +30,59 @@ function mapStatus(status) {
   }
 }
 
-export async function GET() {
+export async function GET(req) {
   try {
+    // Extract token from Authorization header or cookies
+    const authHeader = req.headers.get("authorization");
+    let token = null;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7);
+    } else {
+      const cookieHeader = req.headers.get("cookie");
+      if (cookieHeader) {
+        const cookies = cookieHeader.split(";").reduce((acc, cookie) => {
+          const [key, value] = cookie.trim().split("=");
+          acc[key] = value;
+          return acc;
+        }, {});
+        token = cookies["token"] || cookies["auth-token"];
+      }
+    }
+
+    if (!token) {
+      return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Decode token to get user id and role
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json({ success: false, error: "Invalid or expired token" }, { status: 401 });
+    }
+    const userId = Number(decoded?.id);
+    const role = String(decoded?.role || "").toLowerCase();
+
+    // Build role-based filtering
+    let whereClause = "";
+    let params = [];
+    if (role === "staff") {
+      whereClause = "WHERE c.assigned_to = ?";
+      params = [userId];
+    } else if (role === "student") {
+      whereClause = "WHERE c.created_by = ?";
+      params = [userId];
+    } else if (role === "manager" || role === "admin") {
+      // Full access; no filter
+      whereClause = "";
+      params = [];
+    } else {
+      // Default: restrict to user's own complaints
+      whereClause = "WHERE c.created_by = ?";
+      params = [userId];
+    }
+
     const [rows] = await db.execute(
       `SELECT 
          c.id,
@@ -52,7 +104,9 @@ export async function GET() {
          COALESCE(u.image, '') AS user_image
        FROM complaints c
        LEFT JOIN users u ON u.id = c.created_by
-       ORDER BY c.created_at DESC`
+       ${whereClause}
+       ORDER BY c.created_at DESC`,
+      params
     );
 
     const placeholderImage = "/images/user/user-02.jpg";
