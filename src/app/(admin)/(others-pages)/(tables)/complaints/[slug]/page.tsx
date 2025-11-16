@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import React from "react";
 import ComplaintFeeback from "./complaint-page/ComplaintFeeback";
 import { ComplaintTableItem } from "@/types/global";
@@ -14,9 +15,9 @@ export const metadata: Metadata = {
 export default async function ComplaintDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   // 👇 Fetch from API route (server-side)
   const baseUrl =
@@ -25,8 +26,14 @@ export default async function ComplaintDetailPage({
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
+  // Forward auth token from cookies to authorize server-side fetch
+  const cookieStore = await cookies();
+  const bearer =
+    cookieStore.get("auth-token")?.value || cookieStore.get("token")?.value || "";
+
   const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
     cache: "no-store",
+    headers: bearer ? { Authorization: `Bearer ${bearer}` } : undefined,
   });
   const result = await res.json();
   const complaints: ComplaintTableItem[] = result?.data || [];

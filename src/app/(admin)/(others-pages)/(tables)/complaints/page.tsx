@@ -27,7 +27,8 @@ export default async function ComplaintsTables() {
   });
   const result = await res.json();
   const tableData: ComplaintTableItem[] = result?.data || [];
-
+  console.log("the Complaints: ", tableData);
+  
   return (
     <div>
       <PageBreadcrumb pageTitle="Complaint List" />

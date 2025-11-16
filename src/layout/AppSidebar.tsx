@@ -137,8 +137,8 @@ const AppSidebar: React.FC = () => {
     if (role === "staff") {
       return ["/", "/progress", "/students", "/complaints"].includes(path);
     }
-    if (role === "admin" || role === "manager") {
-      return true; // show everything in main for admins/managers
+    if (role === "administrator" || role === "manager") {
+      return true; // show everything in main for Administrators/Managers
     }
     return false;
   });
@@ -151,7 +151,7 @@ const AppSidebar: React.FC = () => {
     if (role === "staff") {
       return false; // staff list does not include complaint submenu
     }
-    if (role === "admin" || role === "manager") {
+    if (role === "Administrator" || role === "Manager") {
       return path !== "/add-complaint"; // exclude Add Complaint only
     }
     return false;

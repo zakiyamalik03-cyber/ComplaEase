@@ -73,7 +73,7 @@ export async function GET(req) {
     } else if (role === "student") {
       whereClause = "WHERE c.created_by = ?";
       params = [userId];
-    } else if (role === "manager" || role === "admin") {
+    } else if (role === "manager" || role === "administrator" || role === "admin") {
       // Full access; no filter
       whereClause = "";
       params = [];

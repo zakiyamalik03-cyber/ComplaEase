@@ -40,6 +40,7 @@ export default function Home() {
         setLoading(false);
       }
     };
+    
 
     checkAuth();
   }, [router]);
