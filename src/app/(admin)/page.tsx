@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import MonthlyComplaintChart from "@/components/ecommerce/MonthlyComplaintChart";
 import { useRouter } from "next/navigation";
 import ComplaintMetrics from "@/components/ecommerce/ComplaintMetrics";
@@ -41,6 +40,7 @@ export default function Home() {
         setLoading(false);
       }
     };
+    
 
     checkAuth();
   }, [router]);

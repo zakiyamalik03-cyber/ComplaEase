@@ -164,11 +164,15 @@ export default function Progress() {
         updated_at: new Date().toISOString(),
         priority: newComplaint.priority || "Medium",
         category: newComplaint.category || "",
-        name: newComplaint.user?.name || "Unknown",
         image: newComplaint.user?.image || "",
         created_by: newComplaint.created_by || "no",
-        title: newComplaint.subject,
-        createdAt: new Date().toISOString(),
+        user: {
+          image: "",
+          name: "",
+          role: "",
+          department: "",
+          email: "",
+        },
       };
 
       setComplaints([...complaints, complaint]);
@@ -183,16 +187,16 @@ export default function Progress() {
     }
   };
 
-  const columns: Status[] = ["Pending", "In Process", "Resolved", "Completed", "Rejected"];
+  const columns: Status[] = ["Pending", "In Process", "Resolved", "Rejected"];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <PageBreadcrumb pageTitle="Complaint Progress" />
-      
+
       {/* Enhanced Header with Search and Filters */}
       <div className=" mt-6">
         <ComponentCard title="Complaint Reports">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {columns.map((status) => {
               const count = complaints.filter((c) => c.status === status).length;
               return (
@@ -209,7 +213,7 @@ export default function Progress() {
       {/* Kanban Board */}
       <div className="space-y-6 mt-6">
         <ComponentCard title="Kanban Board">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {columns.map((status) => (
               <div
                 key={status}
@@ -236,7 +240,7 @@ export default function Progress() {
                             {c.subject}
                           </h3>
                           {c.priority && (
-                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c?.priority || "Medium"]}`}>
+                            <span className={`px-2 py-1 rounded-full text-xs ${priorityColors[c.priority as keyof typeof priorityColors]}`}>
                               {c.priority}
                             </span>
                           )}
@@ -261,7 +265,8 @@ export default function Progress() {
                         </div>
                         {c.user.name && (
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            By: {c.user.name}
+                            {c.user.name} <span className="mx-2">|</span> {c.user.department}
+
                           </div>
                         )}
                       </div>

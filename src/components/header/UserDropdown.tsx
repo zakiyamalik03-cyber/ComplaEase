@@ -29,6 +29,7 @@ export default function UserDropdown() {
       });
 
       // Clear client-side auth state
+      localStorage.removeItem("token");
       localStorage.removeItem("role");
       localStorage.removeItem("user");
       // setUserData is not provided by useUser; remove this line
