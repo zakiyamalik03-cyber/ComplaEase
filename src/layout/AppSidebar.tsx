@@ -6,16 +6,15 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxIconLine,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
 // import SidebarWidget from "./SidebarWidget";
 import { BookUser, FilePlus, Megaphone, SquareKanban, UserPlus, UsersRound } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
 
 type NavItem = {
   name: string;
@@ -126,6 +125,42 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+  const { userData } = useUser();
+  const role = String(userData?.role || "").toLowerCase();
+
+  // Role-based filtering of visible menu items
+  const mainVisible = navItems.filter((item) => {
+    const path = item.path || "";
+    if (role === "student") {
+      return ["/", "/complaints"].includes(path);
+    }
+    if (role === "staff") {
+      return ["/", "/progress", "/students", "/complaints"].includes(path);
+    }
+    if (role === "admin" || role === "manager") {
+      return true; // show everything in main for admins/managers
+    }
+    return false;
+  });
+
+  const complaintsVisible = complaintItems.filter((item) => {
+    const path = item.path || "";
+    if (role === "student") {
+      return path === "/add-complaint"; // students can add complaints
+    }
+    if (role === "staff") {
+      return false; // staff list does not include complaint submenu
+    }
+    if (role === "admin" || role === "manager") {
+      return path !== "/add-complaint"; // exclude Add Complaint only
+    }
+    return false;
+  });
+
+  const othersVisible = othersItems.filter((item) => {
+    const path = item.path || "";
+    return path === "/profile"; // Profile is visible for all roles
+  });
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -351,6 +386,7 @@ const AppSidebar: React.FC = () => {
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
+            {mainVisible.length > 0 && (
             <div>
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -364,9 +400,11 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(mainVisible, "main")}
             </div>
+            )}
 
+            {complaintsVisible.length > 0 && (
             <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -380,8 +418,10 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(complaintItems, "main")}
+              {renderMenuItems(complaintsVisible, "main")}
             </div>
+            )}
+            {othersVisible.length > 0 && (
             <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -395,8 +435,9 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(othersItems, "others")}
+              {renderMenuItems(othersVisible, "others")}
             </div>
+            )}
           </div>
         </nav>
       </div>
