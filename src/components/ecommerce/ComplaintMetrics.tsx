@@ -82,14 +82,14 @@ export default function ComplaintMetrics({ complaints = [] }: { complaints: Comp
           <div className="flex items-end justify-between mt-5">
             <div>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Completed Complaints
+                Resolved Complaints
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {complaints.filter((c) => c.status === "Completed").length}
+                {complaints.filter((c) => c.status === "Resolved").length}
               </h4>
             </div>
             {(() => {
-              const { text, value } = report("Completed");
+              const { text, value } = report("Resolved");
               return renderBadge(value, text);
             })()}
           </div>

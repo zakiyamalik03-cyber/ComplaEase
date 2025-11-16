@@ -1,24 +1,37 @@
 import { NextResponse } from "next/server";
 
 export function middleware(req) {
-  const token = req.cookies.get("token")?.value 
-              || req.cookies.get("auth-token")?.value 
-              || req.headers.get("Authorization");
-  const isApiRoute = req.nextUrl.pathname.startsWith('/api');
-  const isAuthRoute = req.nextUrl.pathname.startsWith('/signin') || 
-                      req.nextUrl.pathname.startsWith('/signup');
+  const pathname = req.nextUrl.pathname;
 
-  // Don't redirect API routes, just let them fail with 401
+  // Detect authentication via custom JWT or NextAuth cookies
+  const jwtToken = req.cookies.get("token")?.value || req.cookies.get("auth-token")?.value;
+  const nextAuthToken =
+    req.cookies.get("__Secure-next-auth.session-token")?.value ||
+    req.cookies.get("next-auth.session-token")?.value;
+  const headerAuth = req.headers.get("Authorization");
+  const token = jwtToken || nextAuthToken || headerAuth;
+
+  const isApiRoute = pathname.startsWith("/api");
+  const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/signin");
+  const isPublicAsset =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/icons") ||
+    pathname.startsWith("/public");
+
+  // Allow API routes through (they should handle 401 themselves)
   if (isApiRoute) {
     return NextResponse.next();
   }
 
-  // If no token and trying to access protected route, redirect to signin
-  if (!token && !isAuthRoute) {
+  // Redirect unauthenticated users away from protected routes
+  // Use the actual sign-in route used in the app: "/signin"
+  if (!token && !isAuthRoute && !isPublicAsset) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
-  // If has token and trying to access auth routes, redirect to dashboard
+  // If authenticated, prevent navigating to auth pages
   if (token && isAuthRoute) {
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -28,10 +41,6 @@ export function middleware(req) {
 
 export const config = {
   matcher: [
-    '/',
-    '/dashboard/:path*',
-    '/api/:path*',
-    '/signin',
-    '/signup'
+    "/(.*)", // apply to all routes; internal checks exclude public assets and APIs
   ],
 };

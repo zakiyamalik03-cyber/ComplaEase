@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
@@ -23,11 +24,31 @@ export async function POST(req) {
       { expiresIn: "1d" }
     );
 
-    return Response.json({
+    const res = NextResponse.json({
       success: true,
       token,
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
+
+    // Set cookies so middleware can detect authentication globally
+    // Use both names for backward compatibility
+    res.cookies.set("auth-token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24, // 1 day
+      path: "/",
+    });
+
+    res.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24,
+      path: "/",
+    });
+
+    return res;
   } catch (error) {
     console.error("Login error:", error);
     return Response.json({ error: "Server error" }, { status: 500 });
