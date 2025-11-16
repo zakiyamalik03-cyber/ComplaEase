@@ -2,7 +2,6 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import ComplaintsTable from "./ComplaintsTable";
 import { Metadata } from "next";
-import React from "react";
 import { ComplaintTableItem } from "@/types/global";
 
 export const metadata: Metadata = {
@@ -13,38 +12,42 @@ export const metadata: Metadata = {
 };
 
 export default async function ComplaintsTables() {
-  // 👇 Fetch from API route (server-side)
+  // Build absolute URL for server-side fetch
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  let tableData: ComplaintTableItem[] = [];
+  let complaints: ComplaintTableItem[] = [];
 
   try {
+    // Ensure fetch is called with an absolute URL
     const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
       cache: "no-store",
+      headers: {
+        // Forward the cookie header so the API can read the auth session
+        cookie: (await import("next/headers")).cookies().toString(),
+      },
     });
 
     if (!res.ok) {
-      console.error("Failed to fetch complaints:", res.status, res.statusText);
+      // Instead of throwing, log and leave complaints as empty array
+      console.error(`API responded with status ${res.status}`);
     } else {
       const result = await res.json();
-      tableData = result?.data || [];
+      complaints = result?.data || [];
     }
-  } catch (err) {
-    console.error("Error fetching complaints:", err);
+  } catch (error) {
+    console.error("Failed to fetch complaints:", error);
   }
-
-  console.log("the Complaints: ", tableData);
 
   return (
     <div>
       <PageBreadcrumb pageTitle="Complaint List" />
       <div className="space-y-6">
         <ComponentCard title="Complaint List">
-          <ComplaintsTable complaints={tableData} />
+          <ComplaintsTable complaints={complaints} />
         </ComponentCard>
       </div>
     </div>
