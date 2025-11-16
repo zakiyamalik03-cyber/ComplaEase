@@ -4,15 +4,13 @@ import ComplaintsTable from "./ComplaintsTable";
 import { Metadata } from "next";
 import React from "react";
 import { ComplaintTableItem } from "@/types/global";
-0
+
 export const metadata: Metadata = {
   title: "Complaint List | ComplaEase ",
   description:
     "This is Next.js Complaint List page for ComplaEase Admin Dashboard",
   // other metadata
 };
-
-
 
 export default async function ComplaintsTables() {
   // 👇 Fetch from API route (server-side)
@@ -22,13 +20,25 @@ export default async function ComplaintsTables() {
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
-    cache: "no-store",
-  });
-  const result = await res.json();
-  const tableData: ComplaintTableItem[] = result?.data || [];
+  let tableData: ComplaintTableItem[] = [];
+
+  try {
+    const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch complaints:", res.status, res.statusText);
+    } else {
+      const result = await res.json();
+      tableData = result?.data || [];
+    }
+  } catch (err) {
+    console.error("Error fetching complaints:", err);
+  }
+
   console.log("the Complaints: ", tableData);
-  
+
   return (
     <div>
       <PageBreadcrumb pageTitle="Complaint List" />
