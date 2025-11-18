@@ -6,6 +6,8 @@ import Badge from "@/components/ui/badge/Badge";
 import Link from "next/link";
 import { ComplaintTableItem } from "@/types/global";
 import { useUser } from "@/hooks/useUser";
+import Input from "@/components/form/input/InputField";
+import Select from "@/components/form/Select";
 
 
 
@@ -98,7 +100,19 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                     {complaint.subject}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
-                    {complaint.description}
+                    {userData?.role === "administrator" || userData?.role === "manager" ? (
+                      <Select
+                        options={[
+                          { value: "Pending", label: "Pending" },
+                          { value: "In Process", label: "In Process" },
+                          { value: "Resolved", label: "Resolved" },
+                        ]}
+                        value={complaint.status}
+                        onChange={(value) => setComplaintStatus(value)}
+                      />
+                    ) : (
+                      <span className="whitespace-nowrap">{complaint.assignedTo}</span>
+                    )}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     <Badge
