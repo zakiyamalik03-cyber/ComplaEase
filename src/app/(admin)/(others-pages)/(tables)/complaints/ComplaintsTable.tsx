@@ -1,9 +1,12 @@
+"use client"
 import React from "react";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
 import Link from "next/link";
 import { ComplaintTableItem } from "@/types/global";
+import { useUser } from "@/hooks/useUser";
+
 
 
 interface ComplaintsTableProps {
@@ -11,6 +14,7 @@ interface ComplaintsTableProps {
 }
 
 export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
+  const { userData } = useUser();
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -41,14 +45,13 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-300"
                 >
-                  Category
+                  Priority
                 </TableCell>
-                
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-300"
                 >
-                  Priority
+                  Category
                 </TableCell>
                 <TableCell
                   isHeader
@@ -98,9 +101,6 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                     {complaint.description}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
-                    {complaint.category}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     <Badge
                       size="sm"
                       color={
@@ -115,6 +115,10 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
+                    {complaint.category}
+                  </TableCell>
+                  
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     <Badge
                       size="sm"
                       color={
@@ -127,7 +131,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                               : "error"
                       }
                     >
-                      {complaint.status}
+                      <span className="whitespace-nowrap">{complaint.status}</span>
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-300">

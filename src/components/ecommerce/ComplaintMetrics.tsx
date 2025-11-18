@@ -2,7 +2,7 @@
 import React from "react";
 import Badge from "../ui/badge/Badge";
 import { CircleCheckBig, ClipboardClock, Pickaxe } from "lucide-react";
-import { AlertIcon, ArrowDownIcon, ArrowUpIcon, BoxIconLine } from "@/icons";
+import {  ArrowDownIcon, ArrowUpIcon, BoxIconLine } from "@/icons";
 import { Complaint } from "@/types/global";
 
 export default function ComplaintMetrics({ complaints = [] }: { complaints: Complaint[] }) {
