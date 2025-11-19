@@ -7,6 +7,7 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import Alert from "../ui/alert/Alert";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -15,31 +16,48 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [message, setMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState<"success" | "error" | "warning" | "info" | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setAlertVariant(null);
 
     if (!email || !password) {
-      setMessage("❌ Please fill all fields");
+      setMessage("Please fill all fields");
+      setAlertVariant("error");
+      setLoading(false);
       return;
     }
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.user.role);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setMessage("✅ Login successful! Redirecting...");
-      setTimeout(() => router.push("/"), 1000);
-    } else {
-      setMessage(`❌ ${data.error || "Invalid credentials"}`);
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.user.role);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setMessage("Login successful! Redirecting...");
+        setAlertVariant("success");
+        setTimeout(() => router.push("/"), 1000);
+      } else {
+        setMessage(data.error || "Invalid credentials");
+        setAlertVariant("error");
+      }
+    } catch (err) {
+      setMessage("Unexpected error occurred. Please try again.");
+      setAlertVariant("error");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +83,13 @@ export default function SignInForm() {
               Enter your email and password to sign in!
             </p>
           </div>
-
+          {alertVariant && (
+            <Alert
+              variant={alertVariant}
+              title={alertVariant === "success" ? "Success" : alertVariant === "error" ? "Error" : "Info"}
+              message={message}
+            />
+          )}
           <form onSubmit={handleSubmit}>
             <div className="space-y-6">
               <div>
@@ -73,7 +97,7 @@ export default function SignInForm() {
                 <Input
                   placeholder="info@gmail.com"
                   type="email"
-                  defaultValue={email}
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -84,7 +108,7 @@ export default function SignInForm() {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    defaultValue={password}
+                    value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <span
@@ -115,13 +139,11 @@ export default function SignInForm() {
                 </Link>
               </div>
 
-              {message && (
-                <p className="text-sm text-center text-gray-600 dark:text-gray-400">{message}</p>
-              )}
+              
 
               <div>
-                <Button className="w-full" size="sm">
-                  Sign in
+                <Button className="w-full" size="sm" disabled={loading}>
+                  {loading ? "Logging in..." : "Sign in"}
                 </Button>
               </div>
             </div>
