@@ -18,6 +18,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
   const { userData } = useUser();
   const [rows, setRows] = useState<ComplaintTableItem[]>(complaints);
   const [usersOptions, setUsersOptions] = useState<{ value: string; label: string }[]>([]);
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
   const isAdminManager = (userData?.role || "").toLowerCase() === "administrator" || (userData?.role || "").toLowerCase() === "manager" || (userData?.role || "").toLowerCase() === "admin";
 
   const baseUrl = useMemo(() => {
@@ -31,13 +32,21 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
   }, [complaints]);
 
   useEffect(() => {
-    if (!isAdminManager) return;
     const fetchUsers = async () => {
       try {
         const res = await fetch(`${baseUrl}/api/users/getUsers`, { cache: "no-store" });
         const json = await res.json();
         const list = (json?.data || []).map((u: any) => ({ value: String(u.id), label: String(u.name || u.email || u.id) }));
-        setUsersOptions([{ value: "", label: "Select user" }, ...list]);
+        const map: Record<string, string> = {};
+        for (const u of json?.data || []) {
+          const idStr = String(u.id);
+          const nameStr = String(u.name || u.email || u.id);
+          map[idStr] = nameStr;
+        }
+        setUsersMap(map);
+        if (isAdminManager) {
+          setUsersOptions([{ value: "", label: "Select user" }, ...list]);
+        }
       } catch (e) {
         console.error("Failed to fetch users:", e);
       }
@@ -213,7 +222,11 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                         placeholder="Assign user"
                       />
                     ) : (
-                      <span className="whitespace-nowrap">{complaint.assignedTo || "Not Assigned"}</span>
+                      <span className="whitespace-nowrap">
+                        {complaint.assignedTo
+                          ? (usersMap[String(complaint.assignedTo)] ?? String(complaint.assignedTo))
+                          : "Not Assigned"}
+                      </span>
                     )}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
