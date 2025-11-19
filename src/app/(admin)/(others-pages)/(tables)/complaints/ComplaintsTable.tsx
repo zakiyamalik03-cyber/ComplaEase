@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
@@ -14,9 +14,88 @@ import Select from "@/components/form/Select";
 interface ComplaintsTableProps {
   complaints: ComplaintTableItem[];
 }
-
 export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
   const { userData } = useUser();
+  const [rows, setRows] = useState<ComplaintTableItem[]>(complaints);
+  const [usersOptions, setUsersOptions] = useState<{ value: string; label: string }[]>([]);
+  const isAdminManager = (userData?.role || "").toLowerCase() === "administrator" || (userData?.role || "").toLowerCase() === "manager" || (userData?.role || "").toLowerCase() === "admin";
+
+  const baseUrl = useMemo(() => {
+    if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL as string;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    return "http://localhost:3000";
+  }, []);
+
+  useEffect(() => {
+    setRows(complaints);
+  }, [complaints]);
+
+  useEffect(() => {
+    if (!isAdminManager) return;
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/users/getUsers`, { cache: "no-store" });
+        const json = await res.json();
+        const list = (json?.data || []).map((u: any) => ({ value: String(u.id), label: String(u.name || u.email || u.id) }));
+        setUsersOptions([{ value: "", label: "Select user" }, ...list]);
+      } catch (e) {
+        console.error("Failed to fetch users:", e);
+      }
+    };
+    fetchUsers();
+  }, [baseUrl, isAdminManager]);
+
+  useEffect(() => {
+    const es = new EventSource(`${baseUrl}/api/complaint/updates`);
+    es.onmessage = (ev) => {
+      try {
+        const data = JSON.parse(ev.data);
+        const { id, status, displayStatus, assigned_to } = data || {};
+        if (id) {
+          setRows((prev) =>
+            prev.map((r) =>
+              r.id === Number(id)
+                ? {
+                    ...r,
+                    status: displayStatus || (typeof status === "string" ? (status === "in_process" ? "In Process" : status.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase())) : r.status),
+                    assignedTo: assigned_to !== undefined && assigned_to !== null ? String(assigned_to) : r.assignedTo,
+                    updated_at: new Date().toISOString(),
+                  }
+                : r
+            )
+          );
+        }
+      } catch (err) {
+        // ignore parse errors
+      }
+    };
+    es.onerror = () => {
+      es.close();
+    };
+    return () => es.close();
+  }, [baseUrl]);
+
+  async function handleAssign(id: number, assigned_to: string) {
+    try {
+      const res = await fetch(`${baseUrl}/api/complaint/update-assignee`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ id, assigned_to }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json?.success) {
+        console.error("Failed to assign complaint:", json);
+        return;
+      }
+      setRows((prev) => prev.map((r) => (r.id === id ? { ...r, assignedTo: assigned_to } : r)));
+    } catch (e) {
+      console.error("Assign error:", e);
+    }
+  }
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -59,6 +138,12 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-300"
                 >
+                  Assigned To
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-300"
+                >
                   Status
                 </TableCell>
                 <TableCell
@@ -72,7 +157,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
 
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {complaints.map((complaint) => (
+              {rows.map((complaint) => (
                 <TableRow key={complaint.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <Link href={`/complaints/${complaint.complaint_id}`}>
@@ -100,19 +185,7 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                     {complaint.subject}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
-                    {userData?.role === "administrator" || userData?.role === "manager" ? (
-                      <Select
-                        options={[
-                          { value: "Pending", label: "Pending" },
-                          { value: "In Process", label: "In Process" },
-                          { value: "Resolved", label: "Resolved" },
-                        ]}
-                        value={complaint.status}
-                        onChange={(value) => setComplaintStatus(value)}
-                      />
-                    ) : (
-                      <span className="whitespace-nowrap">{complaint.assignedTo}</span>
-                    )}
+                    {complaint.description}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     <Badge
@@ -131,7 +204,18 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     {complaint.category}
                   </TableCell>
-                  
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
+                    {isAdminManager ? (
+                      <Select
+                        options={usersOptions}
+                        defaultValue={String(complaint.assignedTo || "")}
+                        onChange={(value) => handleAssign(complaint.id, value)}
+                        placeholder="Assign user"
+                      />
+                    ) : (
+                      <span className="whitespace-nowrap">{complaint.assignedTo || "Not Assigned"}</span>
+                    )}
+                  </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-300">
                     <Badge
                       size="sm"
