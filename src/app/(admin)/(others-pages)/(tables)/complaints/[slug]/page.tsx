@@ -66,7 +66,7 @@ export default async function ComplaintDetailPage({
         <div className="space-y-6">
           <ComplaintentDetails user={complaint.user as any} />;
           <ComplaintDetailsCard complaint={complaint as any} />
-          <ComplaintFeeback />
+          <ComplaintFeeback complaintId={complaint.id} />
         </div>
       </div>
     </div>
