@@ -4,17 +4,37 @@
 // import Button from "@/components/ui/button/Button";
 // import { Modal } from "@/components/ui/modal";
 // import { useModal } from "@/hooks/useModal";
-import React from "react";
-import { Complaint } from "@/types/global";
+import React, { useEffect, useState } from "react";
+import { ComplaintTableItem } from "@/types/global";
 
-
-export default function ComplaintDetailsCard({ complaint }: { complaint: Complaint }) {
+export default function ComplaintDetailsCard({ complaint }: { complaint: ComplaintTableItem }) {
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
   // const { isOpen, openModal, closeModal } = useModal();
   // const handleSave = () => {
   //   // Handle save logic here
   //   console.log("Saving changes...");
   //   closeModal();
   // };
+    useEffect(() => {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        (process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000");
+  
+      fetch(`${baseUrl}/api/users/getUsers`, { cache: "no-store" })
+        .then((res) => res.json())
+        .then((result) => {
+          const map: Record<string, string> = {};
+          (result?.data || []).forEach((u: { id: string | number; name: string }) => {
+            map[String(u.id)] = u.name;
+          });
+          setUsersMap(map);
+        })
+        .catch(() => {
+          // silently ignore fetch errors; table will fallback to showing the ID
+        });
+    }, []);
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -81,7 +101,7 @@ export default function ComplaintDetailsCard({ complaint }: { complaint: Complai
                 Assigned To
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                {complaint.assigned_to || 'Not Assigned'}
+                {usersMap[complaint.assignedTo] || complaint.assignedTo}
               </p>
             </div>
             <div>
