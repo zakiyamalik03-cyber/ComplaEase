@@ -124,7 +124,7 @@ export default function AddComplaintPage() {
                             title="Complaint Submitted"
                             message="Your complaint has been successfully submitted."
                             showLink={true}
-                            linkHref="/admin/complaints"
+                            linkHref="/Complaints"
                             linkText="Go to Complaints"
                         />
                     )}

@@ -28,9 +28,31 @@ async function getComplaints() {
 
 export default function LatestComplaints() {
   const [complaints, setComplaints] = useState<ComplaintTableItem[]>([]);
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
     getComplaints().then(setComplaints);
+  }, []);
+
+  useEffect(() => {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
+
+    fetch(`${baseUrl}/api/users/getUsers`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((result) => {
+        const map: Record<string, string> = {};
+        (result?.data || []).forEach((u: { id: string | number; name: string }) => {
+          map[String(u.id)] = u.name;
+        });
+        setUsersMap(map);
+      })
+      .catch(() => {
+        // silently ignore fetch errors; table will fallback to showing the ID
+      });
   }, []);
 
   return (
@@ -156,8 +178,10 @@ export default function LatestComplaints() {
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {complaint.subject}
                 </TableCell>
-                                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {complaint.assignedTo || "Not Assigned "}
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {complaint.assignedTo
+                    ? usersMap[String(complaint.assignedTo)] ?? complaint.assignedTo
+                    : "Not Assigned"}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
