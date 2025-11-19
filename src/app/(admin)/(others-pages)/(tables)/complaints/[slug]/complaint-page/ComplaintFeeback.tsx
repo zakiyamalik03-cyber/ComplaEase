@@ -1,32 +1,77 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 
-export default function ComplaintFeedback() {
+type FeedbackItem = {
+  id: number;
+  complaint_id: number;
+  user_id: number;
+  rating: number | null;
+  comment: string;
+  created_at: string;
+};
+
+export default function ComplaintFeedback({ complaintId }: { complaintId: number }) {
   const { isOpen, openModal, closeModal } = useModal();
   const [feedback, setFeedback] = useState("");
   const [isPosting, setIsPosting] = useState(false);
+  const [rating, setRating] = useState<number>(5);
+  const [items, setItems] = useState<FeedbackItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [postError, setPostError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!complaintId) return;
+    const fetchFeedbacks = async () => {
+      try {
+        setError(null);
+        const res = await fetch(`/api/complaints/feedback?complaint_id=${encodeURIComponent(String(complaintId))}` , {
+          cache: "no-store",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`Failed to fetch feedbacks: ${res.status}`);
+        const result = await res.json();
+        setItems(result?.data || []);
+      } catch (e: any) {
+        setError(e?.message || "Failed to load feedbacks");
+      }
+    };
+    fetchFeedbacks();
+  }, [complaintId]);
 
   const handleSubmitFeedback = async () => {
     if (!feedback.trim()) return;
     setIsPosting(true);
+    setPostError(null);
     try {
-      // POST feedback to your API endpoint
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const res = await fetch("/api/complaints/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ feedback }),
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ complaint_id: complaintId, rating, comment: feedback }),
       });
-      if (!res.ok) throw new Error("Failed to post feedback");
-      console.log("Feedback posted:", feedback);
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg = (json && (json.error || json.message || json.details)) || `Failed to post feedback (${res.status})`;
+        throw new Error(msg);
+      }
+      const { data } = json || {};
+      // Prepend new feedback to list
+      setItems((prev) => [data, ...prev]);
       setFeedback("");
+      setRating(5);
       closeModal();
     } catch (err) {
       console.error(err);
+      setPostError(err instanceof Error ? err.message : "Failed to post feedback");
     } finally {
       setIsPosting(false);
     }
@@ -42,23 +87,29 @@ export default function ComplaintFeedback() {
             </h4>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
-              {/* Sample feedback list */}
-              <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
-                <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Student - 2024-07-10
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  The issue was resolved quickly. Thank you!
-                </p>
-              </div>
-              <div className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
-                <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Staff - 2024-07-09
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  We have escalated the billing issue to the finance team.
-                </p>
-              </div>
+              {error && (
+                <div className="p-3 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                </div>
+              )}
+              {items.length === 0 && !error && (
+                <div className="p-3 rounded-lg border border-transparent">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">No feedback yet.</p>
+                </div>
+              )}
+              {items.map((it) => (
+                <div key={it.id} className="p-3 rounded-lg border border-transparent hover:border-gray-300 dark:hover:border-gray-700 transition">
+                  <p className="mb-1 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    User {it.user_id} • {new Date(it.created_at).toLocaleString()}
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {it.comment}
+                  </p>
+                  {it.rating ? (
+                    <span className="mt-1 inline-block text-xs text-gray-500 dark:text-gray-400">Rating: {it.rating}/5</span>
+                  ) : null}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -99,6 +150,11 @@ export default function ComplaintFeedback() {
           <form className="flex flex-col" onSubmit={(e) => { e.preventDefault(); handleSubmitFeedback(); }}>
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5">
+                {postError && (
+                  <div className="p-3 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+                    <p className="text-sm text-red-700 dark:text-red-400">{postError}</p>
+                  </div>
+                )}
                 <div>
                   <Label>Your Feedback</Label>
                   <textarea
@@ -108,6 +164,17 @@ export default function ComplaintFeedback() {
                     className="w-full px-3 py-2 text-sm border rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Write your feedback here..."
                     required
+                  />
+                </div>
+                <div>
+                  <Label>Rating (1-5)</Label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={rating}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                    className="w-full px-3 py-2 text-sm border rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
