@@ -7,7 +7,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SignUpForm() {
+interface SignUpFormProps {
+  onToggle?: () => void;
+}
+
+export default function SignUpForm({ onToggle }: SignUpFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     fname: "",
@@ -42,7 +46,17 @@ export default function SignUpForm() {
 
       if (res.ok) {
         setMessage("✅ Account created successfully! Redirecting...");
-        setTimeout(() => router.push("/signin"), 1500);
+        // If we are in the Slider mode, maybe we should toggle to sign in instead of full redirect?
+        // But for now, let's stick to router push or onToggle
+        setTimeout(() => {
+          if (onToggle) {
+             onToggle();
+             // Reset message?
+             setMessage("");
+          } else {
+             router.push("/signin");
+          }
+        }, 1500);
       } else {
         setMessage(`❌ ${data.error || "Something went wrong"}`);
       }
@@ -53,7 +67,7 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
+    <div className="flex flex-col flex-1 w-full overflow-y-auto no-scrollbar">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
           href="/"
@@ -174,12 +188,21 @@ export default function SignUpForm() {
           <div className="mt-5">
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Already have an account?{" "}
-              <Link
-                href="/signin"
-                className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-              >
-                Sign In
-              </Link>
+              {onToggle ? (
+                 <button
+                   onClick={onToggle}
+                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium"
+                 >
+                   Sign In
+                 </button>
+              ) : (
+                <Link
+                  href="/signin"
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Sign In
+                </Link>
+              )}
             </p>
           </div>
         </div>

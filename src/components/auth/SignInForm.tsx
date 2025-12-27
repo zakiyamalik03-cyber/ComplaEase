@@ -9,7 +9,11 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Alert from "../ui/alert/Alert";
 
-export default function SignInForm() {
+interface SignInFormProps {
+  onToggle?: () => void;
+}
+
+export default function SignInForm({ onToggle }: SignInFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,8 +65,15 @@ export default function SignInForm() {
     }
   };
 
+  const handleSignUpClick = (e: React.MouseEvent) => {
+    if (onToggle) {
+      e.preventDefault();
+      onToggle();
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 lg:w-1/2 w-full">
+    <div className="flex flex-col flex-1 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
           href="/"
@@ -139,8 +150,6 @@ export default function SignInForm() {
                 </Link>
               </div>
 
-              
-
               <div>
                 <Button className="w-full" size="sm" disabled={loading}>
                   {loading ? "Logging in..." : "Sign in"}
@@ -152,12 +161,21 @@ export default function SignInForm() {
           <div className="mt-5">
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Don&apos;t have an account?{" "}
-              <Link
-                href="/signup"
-                className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-              >
-                Sign Up
-              </Link>
+              {onToggle ? (
+                 <button
+                   onClick={onToggle}
+                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium"
+                 >
+                   Sign Up
+                 </button>
+              ) : (
+                <Link
+                  href="/signup"
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Sign Up
+                </Link>
+              )}
             </p>
           </div>
         </div>
