@@ -3,10 +3,11 @@ import { db } from "@/lib/db";
 import jwt from "jsonwebtoken";
 
 // Ensure the feedback table exists
+// This runs once per request if called, but realistically should be a migration.
+// Keeping it light for now.
 async function ensureFeedbackTable() {
   try {
-    // Attempt to create table without FK first to avoid type mismatch issues
-    // We can add FK later or rely on application logic
+    // Basic table check
     await db.execute(`
       CREATE TABLE IF NOT EXISTS feedback (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,27 +18,16 @@ async function ensureFeedbackTable() {
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
-    // Check if user_id column exists (since the user reported schema without it)
-    try {
-        await db.execute("SELECT user_id FROM feedback LIMIT 1");
-    } catch (e) {
-        // Column likely missing, add it
-        console.log("Adding missing user_id column to feedback table...");
-        await db.execute("ALTER TABLE feedback ADD COLUMN user_id INT NOT NULL DEFAULT 0");
-    }
-
   } catch (e) {
     console.error("Ensure table error:", e);
-    // Throwing here to ensure we know if table creation fails
-    throw new Error(`Failed to ensure feedback table: ${e?.message || String(e)}`);
   }
 }
 
+// Helper: Extract user ID from token
 function getAuthUserId(req) {
   try {
-    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
-    const cookieHeader = req.headers.get("cookie") || req.headers.get("Cookie");
+    const authHeader = req.headers.get("authorization");
+    const cookieHeader = req.headers.get("cookie");
     
     let token = null;
 
@@ -62,43 +52,45 @@ function getAuthUserId(req) {
   }
 }
 
+// Helper: Resolve complaint_id (string or int) to numeric PK
+async function resolveComplaintId(rawId) {
+    const strId = String(rawId || "").trim();
+    if (!strId) return null;
+
+    // 1. Try finding by public 'complaint_id' column (e.g. 'CMP-123')
+    try {
+        const [rows] = await db.execute("SELECT id FROM complaints WHERE complaint_id = ?", [strId]);
+        if (Array.isArray(rows) && rows.length > 0) {
+            return Number(rows[0].id);
+        }
+    } catch (e) {
+        // Ignore if column doesn't exist
+    }
+
+    // 2. Fallback: If it looks like a number, try PK lookup
+    if (!Number.isNaN(Number(strId))) {
+        const pk = Number(strId);
+        const [rows] = await db.execute("SELECT id FROM complaints WHERE id = ?", [pk]);
+        if (Array.isArray(rows) && rows.length > 0) {
+            return pk;
+        }
+    }
+
+    return null;
+}
+
 export async function POST(req) {
   try {
+    // Only ensure table on POST (creation), READ/DELETE assume it exists or fail gracefully
     await ensureFeedbackTable();
+    
     const userId = getAuthUserId(req);
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
-    const rawComplaint = body?.complaint_id;
-    
-    let complaintNumericId = null;
-    const complaintStr = String(rawComplaint || "").trim();
-    
-    if (!complaintStr) {
-        return NextResponse.json({ success: false, error: "Missing required field: complaint_id" }, { status: 400 });
-    }
-
-    // Try finding by public complaint_id string
-    try {
-        const [mapRows] = await db.execute("SELECT id FROM complaints WHERE complaint_id = ?", [complaintStr]);
-        if (Array.isArray(mapRows) && mapRows.length > 0) {
-            complaintNumericId = Number(mapRows[0].id);
-        }
-    } catch (e) {
-        // Ignore column missing error, proceed to check by ID
-        console.warn("Lookup by complaint_id column failed:", e.message);
-    }
-
-    if (!complaintNumericId && !Number.isNaN(Number(complaintStr))) {
-        // Fallback: It might be a direct PK
-        const pk = Number(complaintStr);
-        const [pkRows] = await db.execute("SELECT id FROM complaints WHERE id = ?", [pk]);
-        if (Array.isArray(pkRows) && pkRows.length > 0) {
-            complaintNumericId = pk;
-        }
-    }
+    const complaintNumericId = await resolveComplaintId(body?.complaint_id);
 
     if (!complaintNumericId) {
         return NextResponse.json({ success: false, error: "Complaint not found" }, { status: 404 });
@@ -126,8 +118,7 @@ export async function POST(req) {
         success: true,
         data: {
           id: result?.insertId,
-          complaint_id: complaintNumericId, // Internal ID
-          public_complaint_id: rawComplaint, // Return what was sent
+          complaint_id: complaintNumericId,
           user_id: userId,
           rating,
           comment,
@@ -145,7 +136,6 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    await ensureFeedbackTable();
     const { searchParams } = new URL(req.url);
     const rawComplaint = searchParams.get("complaint_id");
     
@@ -156,26 +146,7 @@ export async function GET(req) {
       );
     }
 
-    let complaintNumericId = null;
-    const complaintStr = String(rawComplaint).trim();
-
-    // Try finding by public complaint_id string
-    try {
-        const [mapRows] = await db.execute("SELECT id FROM complaints WHERE complaint_id = ?", [complaintStr]);
-        if (Array.isArray(mapRows) && mapRows.length > 0) {
-            complaintNumericId = Number(mapRows[0].id);
-        }
-    } catch (e) {
-        console.warn("Lookup by complaint_id column failed:", e.message);
-    }
-
-    if (!complaintNumericId && !Number.isNaN(Number(complaintStr))) {
-        const pk = Number(complaintStr);
-        const [pkRows] = await db.execute("SELECT id FROM complaints WHERE id = ?", [pk]);
-        if (Array.isArray(pkRows) && pkRows.length > 0) {
-            complaintNumericId = pk;
-        }
-    }
+    const complaintNumericId = await resolveComplaintId(rawComplaint);
 
     if (!complaintNumericId) {
         return NextResponse.json({ success: false, error: "Complaint not found" }, { status: 404 });
@@ -195,6 +166,10 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: rows || [] }, { status: 200 });
   } catch (error) {
     console.error("GET /api/complaints/feedback error:", error);
+    // If table doesn't exist yet, return empty list instead of error
+    if (error?.code === 'ER_NO_SUCH_TABLE') {
+        return NextResponse.json({ success: true, data: [] }, { status: 200 });
+    }
     return NextResponse.json({ success: false, error: "Internal server error", details: error?.message }, { status: 500 });
   }
 }
@@ -220,10 +195,14 @@ export async function DELETE(req) {
     }
 
     const feedback = rows[0];
+    
+    // Authorization: Allow if owner OR admin
     if (feedback.user_id !== userId) {
          const [userRows] = await db.execute("SELECT role FROM users WHERE id = ?", [userId]);
-         const role = userRows[0]?.role?.toLowerCase();
-         if (role !== 'admin' && role !== 'administrator') {
+         const role = (userRows[0]?.role || "").toLowerCase();
+         const isManager = role === 'admin' || role === 'administrator' || role === 'manager';
+         
+         if (!isManager) {
              return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
          }
     }
