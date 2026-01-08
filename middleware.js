@@ -20,6 +20,8 @@ export function middleware(req) {
     pathname.startsWith("/icons") ||
     pathname.startsWith("/public");
 
+  const isLandingPage = pathname === "/";
+
   // Allow API routes through (they should handle 401 themselves)
   if (isApiRoute) {
     return NextResponse.next();
@@ -27,13 +29,13 @@ export function middleware(req) {
 
   // Redirect unauthenticated users away from protected routes
   // Use the actual sign-in route used in the app: "/signin"
-  if (!token && !isAuthRoute && !isPublicAsset) {
+  if (!token && !isAuthRoute && !isPublicAsset && !isLandingPage) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
   // If authenticated, prevent navigating to auth pages
   if (token && isAuthRoute) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   return NextResponse.next();
