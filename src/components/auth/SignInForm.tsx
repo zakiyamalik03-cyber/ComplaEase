@@ -51,7 +51,7 @@ export default function SignInForm({ onToggle }: SignInFormProps) {
         localStorage.setItem("user", JSON.stringify(data.user));
         setMessage("Login successful! Redirecting...");
         setAlertVariant("success");
-        setTimeout(() => router.push("/"), 1000);
+        setTimeout(() => router.push("/dashboard"), 1000);
       } else {
         setMessage(data.error || "Invalid credentials");
         setAlertVariant("error");
@@ -162,12 +162,12 @@ export default function SignInForm({ onToggle }: SignInFormProps) {
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Don&apos;t have an account?{" "}
               {onToggle ? (
-                 <button
-                   onClick={onToggle}
-                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium"
-                 >
-                   Sign Up
-                 </button>
+                <button
+                  onClick={onToggle}
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium"
+                >
+                  Sign Up
+                </button>
               ) : (
                 <Link
                   href="/signup"
