@@ -169,7 +169,7 @@ export default function LandingPage() {
                                 >
                                     <LayoutDashboard size={20} />
                                     Go to Dashboard
-                                </Link>0
+                                </Link>
                             </div>
                         </div>
 
