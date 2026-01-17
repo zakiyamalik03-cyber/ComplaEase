@@ -150,7 +150,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                         <div className="lg:w-1/2 text-center lg:text-left">
-                            <div className="inline-flex items-center ga0p-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide mb-6">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide mb-6">
                                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
                                 System Live
                             </div>
