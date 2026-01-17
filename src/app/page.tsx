@@ -150,8 +150,8 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                         <div className="lg:w-1/2 text-center lg:text-left">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide mb-6">
-                                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                            <div className="inline-flex items-center ga0p-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold uppercase tracking-wide mb-6">
+                                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
                                 System Live
                             </div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white mb-6">
@@ -169,13 +169,7 @@ export default function LandingPage() {
                                 >
                                     <LayoutDashboard size={20} />
                                     Go to Dashboard
-                                </Link>
-                                <Link
-                                    href={session ? "/dashboard?tab=track" : "/login"}
-                                    className="w-full sm:w-auto px-8 py-3.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
-                                >
-                                    Track Status
-                                </Link>
+                                </Link>0
                             </div>
                         </div>
 
