@@ -18,6 +18,17 @@ async function ensureFeedbackTable() {
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Ensure user_id column exists (in case table was created with an old schema)
+    try {
+      const [columns] = await db.execute("SHOW COLUMNS FROM feedback LIKE 'user_id'");
+      if (Array.isArray(columns) && columns.length === 0) {
+        console.log("Adding missing user_id column to feedback table...");
+        await db.execute("ALTER TABLE feedback ADD COLUMN user_id INT NOT NULL AFTER complaint_id");
+      }
+    } catch (columnError) {
+      console.error("Error checking/adding user_id column:", columnError);
+    }
   } catch (e) {
     console.error("Ensure table error:", e);
   }
@@ -136,6 +147,7 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
+    await ensureFeedbackTable();
     const { searchParams } = new URL(req.url);
     const rawComplaint = searchParams.get("complaint_id");
     
