@@ -1,13 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import mysql from "mysql2/promise";
-
-const db = await mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "cms_db",
-});
+import { db } from "@/lib/db";
 
 export const authOptions = {
   providers: [
