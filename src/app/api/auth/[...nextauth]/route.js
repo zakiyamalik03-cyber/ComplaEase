@@ -8,7 +8,10 @@ export const authOptions = {
       name: "Credentials",
       async authorize(credentials) {
         const [rows] = await db.execute(
-          "SELECT * FROM users WHERE email = ? AND password = ?",
+          `SELECT u.*, r.name as role 
+           FROM users u 
+           JOIN roles r ON u.role_id = r.id 
+           WHERE u.email = ? AND u.password = ?`,
           [credentials.email, credentials.password]
         );
 

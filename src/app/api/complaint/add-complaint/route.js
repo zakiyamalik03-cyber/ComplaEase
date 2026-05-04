@@ -8,11 +8,10 @@ export async function POST(req) {
     const {
       student_id,
       title,
-      category,
+      complaint_type_id,
       priority,
       description,
       status = "pending",
-      image = null,
       created_by,
       assigned_to = null,
     } = body;
@@ -22,9 +21,9 @@ export async function POST(req) {
     const normalizedStatus = (status || "pending").toLowerCase();
 
     // Validate basic required fields
-    if (!title || !category || !description) {
+    if (!title || !complaint_type_id || !description) {
       return NextResponse.json(
-        { error: "Missing required fields: title, category, description" },
+        { error: "Missing required fields: title, complaint_type_id, description" },
         { status: 400 }
       );
     }
@@ -32,7 +31,6 @@ export async function POST(req) {
     // Determine creator id: prefer provided created_by, else student_id
     const creatorSource = created_by ?? student_id;
     const createdByNum = Number(creatorSource);
-    const studentIdNum = Number(student_id);
     if (Number.isNaN(createdByNum)) {
       return NextResponse.json(
         { error: "Invalid created_by/student_id: must be a numeric user id" },
@@ -51,16 +49,15 @@ export async function POST(req) {
 
     // Perform insert (omit auto-increment id; set timestamps in DB)
     const [result] = await db.execute(
-      `INSERT INTO complaints (complaint_id, title, category, priority, description, status, image, created_by, assigned_to, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      `INSERT INTO complaints (complaint_id, title, complaint_type_id, priority, description, status, created_by, assigned_to, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [
         complaint_id,
         title,
-        category,
+        complaint_type_id,
         priority,
         description,
         normalizedStatus,
-        image,
         createdByNum,
         assigned_to,
       ]
