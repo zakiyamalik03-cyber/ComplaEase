@@ -20,6 +20,8 @@ export default function AddComplaintPage() {
     const [complaint_type_id, setComplaintTypeId] = useState("");
     const [priority, setPriority] = useState("Auto");
     const [description, setDescription] = useState("");
+    const [title, setTitle] = useState("");
+    const [status, setStatus] = useState("pending");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -137,7 +139,7 @@ export default function AddComplaintPage() {
                             <Input
                                 id="title"
                                 placeholder="Brief title of the complaint"
-                                defaultValue={title}
+                                value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
