@@ -33,6 +33,14 @@ export async function PATCH(req) {
 
     // Parse body and pick allowed fields for update
     const body = await req.json();
+    
+    // Validate image if present
+    if (body.image && typeof body.image === "string" && body.image.trim() !== "") {
+      if (!body.image.startsWith("/") && !body.image.startsWith("http")) {
+        return NextResponse.json({ error: "Invalid image URL format" }, { status: 400 });
+      }
+    }
+
     const allowed = ["name", "email", "phone", "department", "image", "gender"];
     const updates = Object.entries(body).filter(([k, v]) => allowed.includes(k));
 

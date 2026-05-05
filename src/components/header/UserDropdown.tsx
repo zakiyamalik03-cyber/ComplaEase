@@ -59,7 +59,8 @@ export default function UserDropdown() {
             src={
               userData?.image &&
                 userData.image !== "undefined" &&
-                userData.image !== "null"
+                userData.image !== "null" &&
+                (userData.image.startsWith("/") || userData.image.startsWith("http"))
                 ? userData.image
                 : "/images/user/male.jpg"
             }
