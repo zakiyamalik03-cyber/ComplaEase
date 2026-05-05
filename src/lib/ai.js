@@ -1,15 +1,17 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 
 export async function analyzePriority(title, description) {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      console.warn("GEMINI_API_KEY is not set. Defaulting to 'Low' priority.");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("GEMINI_API_KEY is not set. Defaulting to 'Low'.");
       return "Low";
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are a specialized complaint management assistant for an educational institution. 
@@ -48,20 +50,20 @@ export async function analyzePriority(title, description) {
     if (lowerText.includes("high")) return "High";
     if (lowerText.includes("medium")) return "Medium";
     if (lowerText.includes("low")) return "Low";
-
+    
     return "Low";
   } catch (error) {
     console.error("AI Priority Analysis Error:", error);
-
-    // Keyword-based fallback if AI fails
+    
+    // Keyword-based fallback if AI fails (Safety net for free tier)
     const fullText = `${title} ${description}`.toLowerCase();
-    if (fullText.includes("teacher") || fullText.includes("exam") || fullText.includes("fire") || fullText.includes("safety") || fullText.includes("harassment")) {
+    if (fullText.includes("teacher") || fullText.includes("exam") || fullText.includes("fire") || fullText.includes("safety") || fullText.includes("harassment") || fullText.includes("leak") || fullText.includes("explosion") || fullText.includes("dangerous")) {
       return "High";
     }
-    if (fullText.includes("broken") || fullText.includes("leak") || fullText.includes("water") || fullText.includes("light")) {
+    if (fullText.includes("broken") || fullText.includes("water") || fullText.includes("light") || fullText.includes("plumbing") || fullText.includes("software")) {
       return "Medium";
     }
-
+    
     return "Low";
   }
 }
