@@ -18,7 +18,7 @@ export default function AddComplaintPage() {
     const [created_by, setCreatedBy] = useState("");
     const [complaintTypes, setComplaintTypes] = useState<{ value: string; label: string }[]>([]);
     const [complaint_type_id, setComplaintTypeId] = useState("");
-    const [priority, setPriority] = useState("Low");
+    const [priority, setPriority] = useState("Auto");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -47,6 +47,7 @@ export default function AddComplaintPage() {
     }, []);
 
     const priorityOptions = [
+        { value: "Auto", label: "Auto (AI Recommended)" },
         { value: "Low", label: "Low" },
         { value: "Medium", label: "Medium" },
         { value: "High", label: "High" },
@@ -93,7 +94,7 @@ export default function AddComplaintPage() {
             // Reset form state
             setTitle("");
             setComplaintTypeId("");
-            setPriority("Low");
+            setPriority("Auto");
             setDescription("");
             setStatus("pending");
             setSuccess(true);

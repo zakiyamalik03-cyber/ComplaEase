@@ -1,11 +1,12 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { analyzePriority } from "@/lib/ai";
 
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    const {
+    let {
       student_id,
       title,
       complaint_type_id,
@@ -15,6 +16,11 @@ export async function POST(req) {
       created_by,
       assigned_to = null,
     } = body;
+
+    // Auto-select priority if not provided or set to "Auto"
+    if (!priority || priority === "Auto") {
+      priority = await analyzePriority(title, description);
+    }
 
     // Generate complaint_id (unique-ish) and set created_by to the student
     const complaint_id = `CMP-${Date.now()}`;
