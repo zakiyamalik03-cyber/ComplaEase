@@ -5,20 +5,16 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
   BoxIconLine,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
+import { BookUser, FilePlus, Megaphone, SquareKanban, UserPlus, UsersRound } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
 
 type NavItem = {
   name: string;
@@ -34,27 +30,48 @@ const navItems: NavItem[] = [
     path: "/"
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
+    icon: <SquareKanban />,
+    name: "Progress",
+    path: "/progress"
   },
-
-
   {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+    icon: <Megaphone />,
+    name: "Announcements",
+    path: "/announcements"
   },
+  // {
+  //   icon: <CalenderIcon />,
+  //   name: "Calendar",
+  //   path: "/calendar",
+  // },
+
+
+  // {
+  //   name: "Forms",
+  //   icon: <ListIcon />,
+  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  // },
   {
     name: "Students",
-    icon: <TableIcon />,
+    icon: <BookUser />,
     path: "/students"
+  },
+  {
+    name: "Staff",
+    icon: <UsersRound />,
+    path: "/staff"
   },
   {
     name: "Complaints",
     icon: <TableIcon />,
     path: "/complaints"
   },
+  {
+    name: "Add Staff",
+    icon: <UserPlus />,
+    path: "/add-staff"
+  },
+
   // {
   //   name: "Pages",
   //   icon: <PageIcon />,
@@ -64,7 +81,12 @@ const navItems: NavItem[] = [
   //   ],
   // },
 ];
-const accountItems: NavItem[] = [
+const complaintItems: NavItem[] = [
+    {
+    name: "Add Complaint",
+    icon: <FilePlus />,
+    path: "/add-complaint"
+  },
   {
     icon: <BoxIconLine />,
     name: "Resolve Complaints",
@@ -103,6 +125,42 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+  const { userData } = useUser();
+  const role = String(userData?.role || "").toLowerCase();
+
+  // Role-based filtering of visible menu items
+  const mainVisible = navItems.filter((item) => {
+    const path = item.path || "";
+    if (role === "student") {
+      return ["/", "/complaints"].includes(path);
+    }
+    if (role === "staff") {
+      return ["/", "/progress", "/students", "/complaints"].includes(path);
+    }
+    if (role === "administrator" || role === "manager") {
+      return true; // show everything in main for Administrators/Managers
+    }
+    return false;
+  });
+
+  const complaintsVisible = complaintItems.filter((item) => {
+    const path = item.path || "";
+    if (role === "student") {
+      return path === "/add-complaint"; // students can add complaints
+    }
+    if (role === "staff") {
+      return false; // staff list does not include complaint submenu
+    }
+    if (role === "Administrator" || role === "Manager") {
+      return path !== "/add-complaint"; // exclude Add Complaint only
+    }
+    return false;
+  });
+
+  const othersVisible = othersItems.filter((item) => {
+    const path = item.path || "";
+    return path === "/profile"; // Profile is visible for all roles
+  });
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -328,6 +386,7 @@ const AppSidebar: React.FC = () => {
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
+            {mainVisible.length > 0 && (
             <div>
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -341,9 +400,11 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(mainVisible, "main")}
             </div>
+            )}
 
+            {complaintsVisible.length > 0 && (
             <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -352,13 +413,15 @@ const AppSidebar: React.FC = () => {
                   }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Accounts"
+                  "Complaints"
                 ) : (
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(accountItems, "main")}
+              {renderMenuItems(complaintsVisible, "main")}
             </div>
+            )}
+            {othersVisible.length > 0 && (
             <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
@@ -372,8 +435,9 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(othersItems, "others")}
+              {renderMenuItems(othersVisible, "others")}
             </div>
+            )}
           </div>
         </nav>
       </div>
