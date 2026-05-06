@@ -175,7 +175,11 @@ export default function ComplaintsTable({ complaints }: ComplaintsTableProps) {
                           <Image
                             width={40}
                             height={40}
-                            src={complaint.user?.image || "/images/user/user-02.jpg"}
+                            src={
+                              complaint.user?.image && (complaint.user.image.startsWith("/") || complaint.user.image.startsWith("http"))
+                                ? complaint.user.image
+                                : "/images/user/user-02.jpg"
+                            }
                             alt={complaint.user?.name || "user-name"}
                           />
                         </div>

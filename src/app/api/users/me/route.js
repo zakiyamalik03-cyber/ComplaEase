@@ -33,7 +33,10 @@ export async function GET(req) {
 
     // Get user data from database
     const [rows] = await db.execute(
-      "SELECT id, name, email, role, phone, department, image, gender FROM users WHERE id = ?", 
+      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender 
+       FROM users u 
+       JOIN roles r ON u.role_id = r.id 
+       WHERE u.id = ?`, 
       [userId]
     );
 

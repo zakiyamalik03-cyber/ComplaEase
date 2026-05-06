@@ -33,6 +33,14 @@ export async function PATCH(req) {
 
     // Parse body and pick allowed fields for update
     const body = await req.json();
+    
+    // Validate image if present
+    if (body.image && typeof body.image === "string" && body.image.trim() !== "") {
+      if (!body.image.startsWith("/") && !body.image.startsWith("http")) {
+        return NextResponse.json({ error: "Invalid image URL format" }, { status: 400 });
+      }
+    }
+
     const allowed = ["name", "email", "phone", "department", "image", "gender"];
     const updates = Object.entries(body).filter(([k, v]) => allowed.includes(k));
 
@@ -55,7 +63,10 @@ export async function PATCH(req) {
 
     // Return latest user data
     const [rows] = await db.execute(
-      "SELECT id, name, email, role, phone, department, image, gender FROM users WHERE id = ?",
+      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender 
+       FROM users u 
+       JOIN roles r ON u.role_id = r.id 
+       WHERE u.id = ?`,
       [userId]
     );
 
