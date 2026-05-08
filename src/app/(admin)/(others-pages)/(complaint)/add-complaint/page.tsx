@@ -68,13 +68,13 @@ export default function AddComplaintPage() {
             return;
         }
 
-        const payload = { 
-            title, 
-            complaint_type_id: Number(complaint_type_id), 
-            priority, 
-            description, 
-            status, 
-            created_by: Number(created_by) 
+        const payload = {
+            title,
+            complaint_type_id: Number(complaint_type_id),
+            priority,
+            description,
+            status,
+            created_by: Number(created_by)
         };
 
         try {
@@ -89,7 +89,7 @@ export default function AddComplaintPage() {
                 try {
                     const data = await res.json();
                     if (data.error) message = data.error;
-                } catch {}
+                } catch { }
                 throw new Error(message || "Failed to post complaint");
             }
 
@@ -128,7 +128,7 @@ export default function AddComplaintPage() {
                             title="Complaint Submitted"
                             message="Your complaint has been successfully submitted."
                             showLink={true}
-                            linkHref="/Complaints"
+                            linkHref="/complaints"
                             linkText="Go to Complaints"
                         />
                     )}

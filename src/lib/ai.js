@@ -18,15 +18,24 @@ export async function analyzePriority(title, description) {
       Analyze the following complaint and categorize its priority as "Low", "Medium", or "High".
       
       Criteria:
-      - High: CRITICAL issues. Safety hazards (fire, exposed wires), total infrastructure failure (no water, no power), or SIGNIFICANT educational disruption (teacher absent for weeks, exams in danger, major harassment).
-      - Medium: IMPORTANT issues. Functional problems (flickering lights, minor plumbing leaks, classroom equipment malfunctions, missing textbooks).
-      - Low: ROUTINE issues. Minor inconveniences (dirty floor, furniture polish, general info requests).
+      - High: CRITICAL or URGENT issues. This includes:
+        * Safety hazards (fire, exposed wires, gas leaks, structural damage).
+        * Total infrastructure failure (entire floor with no water/power, major flooding, no internet for a whole department).
+        * Significant educational disruption (teacher absent for 2+ weeks, exams at risk, harassment, severe bullying).
+        * Any complaint using words like "Emergency", "Urgent", "Dangerous", or "Immediate action required".
+      - Medium: IMPORTANT but not life-threatening issues. This includes:
+        * Functional problems (flickering lights, minor plumbing leaks in one room, classroom equipment malfunctions, missing textbooks).
+        * Recurring software bugs affecting some users.
+      - Low: ROUTINE maintenance or minor inconveniences. This includes:
+        * Dirty floors, furniture polish, general info requests, minor comfort adjustments (e.g., room temperature slightly off).
 
       Examples:
       - Title: "Broken Window", Description: "Someone threw a ball and broke the classroom window." -> Priority: Medium
       - Title: "No Water", Description: "The whole department has no running water since morning." -> Priority: High
       - Title: "Light bulb", Description: "One of the four bulbs in the hall is fused." -> Priority: Low
       - Title: "Teacher Absent", Description: "Our math teacher hasn't come for 3 weeks and exams are near." -> Priority: High
+      - Title: "Emergency: Water Leak", Description: "A pipe burst in the hallway and there is flooding everywhere." -> Priority: High
+      - Title: "Slow WiFi", Description: "The internet is a bit slow in the library today." -> Priority: Low
 
       Complaint Title: "${title}"
       Complaint Description: "${description}"

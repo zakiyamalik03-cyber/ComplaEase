@@ -26,6 +26,31 @@ export async function POST(req) {
     const complaint_id = `CMP-${Date.now()}`;
     const normalizedStatus = (status || "pending").toLowerCase();
 
+    // Auto-assign to staff based on role associated with complaint type
+    if (!assigned_to) {
+      try {
+        const [assigneeRows] = await db.execute(
+          `SELECT u.id 
+           FROM users u
+           JOIN complaint_types ct ON u.role_id = ct.role_id
+           LEFT JOIN complaints c ON u.id = c.assigned_to AND c.status != 'resolved'
+           WHERE ct.id = ?
+           GROUP BY u.id
+           ORDER BY COUNT(c.id) ASC
+           LIMIT 1`,
+          [complaint_type_id]
+        );
+        
+        if (Array.isArray(assigneeRows) && assigneeRows.length > 0) {
+          assigned_to = assigneeRows[0].id;
+          console.log(`Auto-assigned complaint ${complaint_id} to user ${assigned_to}`);
+        }
+      } catch (assignError) {
+        console.error("Auto-assignment failed:", assignError);
+        // Continue without assignment if it fails
+      }
+    }
+
     // Validate basic required fields
     if (!title || !complaint_type_id || !description) {
       return NextResponse.json(
