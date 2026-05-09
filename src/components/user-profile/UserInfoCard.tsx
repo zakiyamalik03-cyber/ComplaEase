@@ -16,7 +16,7 @@ export default function UserInfoCard() {
     lastName: "",
     email: "",
     phone: "",
-    bio: ""
+    department: ""
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -32,7 +32,7 @@ export default function UserInfoCard() {
         lastName,
         email: userData.email || "",
         phone: userData.phone || "",
-        bio: userData.bio || ""
+        department: userData.department || ""
       });
     }
   }, [userData]);
@@ -50,7 +50,7 @@ export default function UserInfoCard() {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: formData.phone,
-        bio: formData.bio
+        department: formData.department
       });
 
       if (result.success) {
@@ -208,12 +208,13 @@ export default function UserInfoCard() {
                   </div>
 
                   <div className="col-span-2">
-                    <Label>Bio</Label>
+                    <Label>Department</Label>
                     <Input
                       type="text"
-                      name="bio"
-                      value={formData.bio}
+                      name="department"
+                      value={formData.department}
                       onChange={handleChange}
+                      disabled
                     />
                   </div>
                 </div>
