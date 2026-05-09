@@ -39,6 +39,11 @@ export interface UserData {
   image?: string;
   gender?: string;
   bio?: string;
+  country?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  tax_id?: string;
 }
 
 // Table view model used by ComplaintsTable

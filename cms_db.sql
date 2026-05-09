@@ -33,6 +33,11 @@ CREATE TABLE users (
   image VARCHAR(250),
   gender VARCHAR(20),
   bio TEXT,
+  country VARCHAR(100),
+  city VARCHAR(100),
+  state VARCHAR(100),
+  postal_code VARCHAR(20),
+  tax_id VARCHAR(50),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (role_id) REFERENCES roles(id)
 );
