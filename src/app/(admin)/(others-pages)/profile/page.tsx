@@ -4,8 +4,6 @@ import UserInfoCard from "@/components/user-profile/UserInfoCard";
 import UserMetaCard from "@/components/user-profile/UserMetaCard";
 import React from "react";
 
-// Metadata moved to layout file
-
 export default function Profile() {
   return (
     <div>
