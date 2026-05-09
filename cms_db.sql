@@ -32,6 +32,7 @@ CREATE TABLE users (
   department VARCHAR(100),
   image VARCHAR(250),
   gender VARCHAR(20),
+  bio TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (role_id) REFERENCES roles(id)
 );

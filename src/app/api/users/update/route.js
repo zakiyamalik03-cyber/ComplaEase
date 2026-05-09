@@ -41,7 +41,7 @@ export async function PATCH(req) {
       }
     }
 
-    const allowed = ["name", "email", "phone", "department", "image", "gender"];
+    const allowed = ["name", "email", "phone", "department", "image", "gender", "bio"];
     const updates = Object.entries(body).filter(([k, v]) => allowed.includes(k));
 
     if (updates.length === 0) {
