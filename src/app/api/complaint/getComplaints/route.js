@@ -62,7 +62,22 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: "Invalid or expired token" }, { status: 401 });
     }
     const userId = Number(decoded?.id);
-    const role = String(decoded?.role || "").toLowerCase();
+    let role = String(decoded?.role || "").toLowerCase();
+
+    // Fetch the latest role from DB to handle old tokens without a role or stale roles
+    if (userId) {
+      try {
+        const [userRows] = await db.execute(
+          `SELECT r.name as role FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
+          [userId]
+        );
+        if (userRows && userRows.length > 0 && userRows[0].role) {
+          role = String(userRows[0].role).toLowerCase();
+        }
+      } catch (err) {
+        console.error("Error fetching user role for getComplaints:", err);
+      }
+    }
 
     // Build role-based filtering
     let whereClause = "";
