@@ -41,7 +41,7 @@ export async function PATCH(req) {
       }
     }
 
-    const allowed = ["name", "email", "phone", "department", "image", "gender"];
+    const allowed = ["name", "email", "phone", "department", "image", "gender", "bio", "country", "city", "state", "postal_code", "tax_id"];
     const updates = Object.entries(body).filter(([k, v]) => allowed.includes(k));
 
     if (updates.length === 0) {
@@ -63,7 +63,7 @@ export async function PATCH(req) {
 
     // Return latest user data
     const [rows] = await db.execute(
-      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender 
+      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender, u.bio, u.country, u.city, u.state, u.postal_code, u.tax_id
        FROM users u 
        JOIN roles r ON u.role_id = r.id 
        WHERE u.id = ?`,
@@ -82,6 +82,12 @@ export async function PATCH(req) {
         department: user.department || "",
         image: user.image || "",
         gender: user.gender || "",
+        bio: user.bio || "",
+        country: user.country || "",
+        city: user.city || "",
+        state: user.state || "",
+        postal_code: user.postal_code || "",
+        tax_id: user.tax_id || "",
       },
     });
   } catch (error) {

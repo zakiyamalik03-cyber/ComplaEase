@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -9,12 +9,61 @@ import { useUser } from "@/hooks/useUser";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const { userData, loading } = useUser();
+  const { userData, loading, updateUser } = useUser();
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    department: ""
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      const nameParts = userData.name?.split(" ") || [];
+      const firstName = nameParts.slice(0, -1).join(" ") || nameParts[0] || "";
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+
+      setFormData({
+        firstName,
+        lastName,
+        email: userData.email || "",
+        phone: userData.phone || "",
+        department: userData.department || ""
+      });
+    }
+  }, [userData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const result = await updateUser({
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        phone: formData.phone,
+        department: formData.department
+      });
+
+      if (result.success) {
+        closeModal();
+      } else {
+        alert(result.error || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("An unexpected error occurred");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -25,7 +74,7 @@ export default function UserInfoCard() {
             Personal Information
           </h4>
 
-          {loading ? (
+          {loading && !userData ? (
             <div className="text-center py-4">Loading user information...</div>
           ) : (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
@@ -110,7 +159,7 @@ export default function UserInfoCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSave}>
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div className="mt-7">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
@@ -120,37 +169,63 @@ export default function UserInfoCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>First Name</Label>
-                    <Input type="text" defaultValue="Muhammad Ali" />
+                    <Input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Last Name</Label>
-                    <Input type="text" defaultValue="Husnain" />
+                    <Input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Email Address</Label>
-                    <Input type="text" defaultValue="alihusnainmughal215@gmail.com" />
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Phone</Label>
-                    <Input type="text" defaultValue="+92 307 4681469" />
+                    <Input
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
                   </div>
 
                   <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" defaultValue="Administrator" />
+                    <Label>Department</Label>
+                    <Input
+                      type="text"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleChange}
+                      disabled
+                    />
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
+              <Button size="sm" variant="outline" onClick={closeModal} disabled={isSaving}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button size="sm" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

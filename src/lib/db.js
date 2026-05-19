@@ -11,7 +11,6 @@ const dbConfig = {
   queueLimit: 0,
 };
 
-// Use a shared pool to avoid opening too many connections
 let pool;
 export function getPool() {
   if (!pool) {
