@@ -61,7 +61,11 @@ export default function StaffTable({ students = [] }: StudentsTableProps) {
                         <Image
                           width={40}
                           height={40}
-                          src={student?.image || ""}
+                          src={
+                            student?.image && (student.image.startsWith("/") || student.image.startsWith("http"))
+                              ? student.image
+                              : "/images/user/user-01.jpg"
+                          }
                           alt={student?.name || ""}
                         />
                       </div>

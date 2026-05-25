@@ -1,10 +1,10 @@
 export interface User {
   id: string;
-    name: string;
-    email: string;
-    image: string;
-    role: string;
-    department: string;
+  name: string;
+  email: string;
+  image: string;
+  role: string;
+  department: string;
 }
 export interface Student {
   id: number;
@@ -38,6 +38,12 @@ export interface UserData {
   department?: string;
   image?: string;
   gender?: string;
+  bio?: string;
+  country?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  tax_id?: string;
 }
 
 // Table view model used by ComplaintsTable
@@ -59,7 +65,7 @@ export interface ComplaintTableItem {
   image: string | null;
   assignedTo: string;
   created_by: string;
-created_at: string;
+  created_at: string;
   updated_at: string;
 
 }

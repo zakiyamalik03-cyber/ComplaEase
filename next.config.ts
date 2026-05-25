@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "devdoz.com",
+        pathname: "/images/**",
+      },
+    ],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

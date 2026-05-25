@@ -177,7 +177,11 @@ export default function AnnouncementPage() {
                             <Image
                               width={40}
                               height={40}
-                              src={ann.creator.image || "/images/user/user-01.jpg"}
+                              src={
+                                ann.creator.image && (ann.creator.image.startsWith("/") || ann.creator.image.startsWith("http"))
+                                  ? ann.creator.image
+                                  : "/images/user/user-01.jpg"
+                              }
                               alt="User"
                               className="w-full overflow-hidden rounded-full"
                             />

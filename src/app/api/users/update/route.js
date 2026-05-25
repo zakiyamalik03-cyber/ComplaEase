@@ -33,7 +33,15 @@ export async function PATCH(req) {
 
     // Parse body and pick allowed fields for update
     const body = await req.json();
-    const allowed = ["name", "email", "phone", "department", "image", "gender"];
+    
+    // Validate image if present
+    if (body.image && typeof body.image === "string" && body.image.trim() !== "") {
+      if (!body.image.startsWith("/") && !body.image.startsWith("http")) {
+        return NextResponse.json({ error: "Invalid image URL format" }, { status: 400 });
+      }
+    }
+
+    const allowed = ["name", "email", "phone", "department", "image", "gender", "bio", "country", "city", "state", "postal_code", "tax_id"];
     const updates = Object.entries(body).filter(([k, v]) => allowed.includes(k));
 
     if (updates.length === 0) {
@@ -55,7 +63,10 @@ export async function PATCH(req) {
 
     // Return latest user data
     const [rows] = await db.execute(
-      "SELECT id, name, email, role, phone, department, image, gender FROM users WHERE id = ?",
+      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender, u.bio, u.country, u.city, u.state, u.postal_code, u.tax_id
+       FROM users u 
+       JOIN roles r ON u.role_id = r.id 
+       WHERE u.id = ?`,
       [userId]
     );
 
@@ -71,6 +82,12 @@ export async function PATCH(req) {
         department: user.department || "",
         image: user.image || "",
         gender: user.gender || "",
+        bio: user.bio || "",
+        country: user.country || "",
+        city: user.city || "",
+        state: user.state || "",
+        postal_code: user.postal_code || "",
+        tax_id: user.tax_id || "",
       },
     });
   } catch (error) {

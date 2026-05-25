@@ -40,14 +40,30 @@ export async function PATCH(request) {
     }
 
     let role = "";
+    let userId = null;
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = Number(decoded?.id);
       role = String(decoded?.role || "").toLowerCase();
     } catch (err) {
       return NextResponse.json(
         { success: false, error: "Invalid or expired token" },
         { status: 401 }
       );
+    }
+
+    if (userId) {
+      try {
+        const [userRows] = await db.execute(
+          `SELECT r.name as role FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
+          [userId]
+        );
+        if (userRows && userRows.length > 0 && userRows[0].role) {
+          role = String(userRows[0].role).toLowerCase();
+        }
+      } catch (err) {
+        console.error("Error fetching user role:", err);
+      }
     }
 
     if (!(role === "manager" || role === "administrator" || role === "admin")) {

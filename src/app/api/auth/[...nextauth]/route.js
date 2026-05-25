@@ -1,21 +1,17 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import mysql from "mysql2/promise";
+import { db } from "@/lib/db";
 
-const db = await mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "cms_db",
-});
-
-export const authOptions = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       async authorize(credentials) {
         const [rows] = await db.execute(
-          "SELECT * FROM users WHERE email = ? AND password = ?",
+          `SELECT u.*, r.name as role 
+           FROM users u 
+           JOIN roles r ON u.role_id = r.id 
+           WHERE u.email = ? AND u.password = ?`,
           [credentials.email, credentials.password]
         );
 

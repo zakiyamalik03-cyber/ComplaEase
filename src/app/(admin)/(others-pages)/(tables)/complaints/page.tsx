@@ -23,11 +23,12 @@ export default async function ComplaintsTables() {
 
   try {
     // Ensure fetch is called with an absolute URL
+    const cookieStore = await (await import("next/headers")).cookies();
     const res = await fetch(`${baseUrl}/api/complaint/getComplaints`, {
       cache: "no-store",
       headers: {
         // Forward the cookie header so the API can read the auth session
-        cookie: (await import("next/headers")).cookies().toString(),
+        cookie: cookieStore.toString(),
       },
     });
 

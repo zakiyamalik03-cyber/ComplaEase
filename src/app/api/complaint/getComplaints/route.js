@@ -62,23 +62,36 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: "Invalid or expired token" }, { status: 401 });
     }
     const userId = Number(decoded?.id);
-    const role = String(decoded?.role || "").toLowerCase();
+    let role = String(decoded?.role || "").toLowerCase();
+
+    // Fetch the latest role from DB to handle old tokens without a role or stale roles
+    if (userId) {
+      try {
+        const [userRows] = await db.execute(
+          `SELECT r.name as role FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?`,
+          [userId]
+        );
+        if (userRows && userRows.length > 0 && userRows[0].role) {
+          role = String(userRows[0].role).toLowerCase();
+        }
+      } catch (err) {
+        console.error("Error fetching user role for getComplaints:", err);
+      }
+    }
 
     // Build role-based filtering
     let whereClause = "";
     let params = [];
-    if (role === "staff") {
-      whereClause = "WHERE c.assigned_to = ?";
-      params = [userId];
-    } else if (role === "student") {
+    if (role === "student") {
       whereClause = "WHERE c.created_by = ?";
       params = [userId];
+    } else if (role.includes("staff")) {
+      whereClause = "WHERE c.assigned_to = ?";
+      params = [userId];
     } else if (role === "manager" || role === "administrator" || role === "admin") {
-      // Full access; no filter
       whereClause = "";
       params = [];
     } else {
-      // Default: restrict to user's own complaints
       whereClause = "WHERE c.created_by = ?";
       params = [userId];
     }
@@ -89,21 +102,22 @@ export async function GET(req) {
          c.complaint_id,
          c.title,
          c.description,
-         c.category,
+         ct.name AS category,
          c.priority,
          c.status,
          c.created_at,
          c.updated_at,
-         c.image,
          c.assigned_to,
          c.created_by,
          u.name AS user_name,
-         u.role AS user_role,
+         r.name AS user_role,
          u.department AS user_department,
          u.email AS user_email,
          COALESCE(u.image, '') AS user_image
        FROM complaints c
+       LEFT JOIN complaint_types ct ON ct.id = c.complaint_type_id
        LEFT JOIN users u ON u.id = c.created_by
+       LEFT JOIN roles r ON r.id = u.role_id
        ${whereClause}
        ORDER BY c.created_at DESC`,
       params

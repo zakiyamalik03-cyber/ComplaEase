@@ -56,8 +56,15 @@ export default function UserDropdown() {
           <Image
             width={44}
             height={44}
-            src={userData?.image || "/images/user/male.jpg"}
-            alt={userData?.name || "Anonymous User"}
+            src={
+              userData?.image &&
+                userData.image !== "undefined" &&
+                userData.image !== "null" &&
+                (userData.image.startsWith("/") || userData.image.startsWith("http"))
+                ? userData.image
+                : "/images/user/male.jpg"
+            }
+            alt={userData?.name || "User Profile"}
           />
         </span>
 

@@ -8,7 +8,7 @@ interface StudentsTableProps {
   students?: UserData[] | null;
 }
 export default function StudentsTable({ students = [] }: StudentsTableProps) {
-  const safeStudents = Array.isArray(students) ? students : [];  
+  const safeStudents = Array.isArray(students) ? students : [];
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -61,7 +61,11 @@ export default function StudentsTable({ students = [] }: StudentsTableProps) {
                         <Image
                           width={40}
                           height={40}
-                          src={student?.image || ""}
+                          src={
+                            student?.image && (student.image.startsWith("/") || student.image.startsWith("http"))
+                              ? student.image
+                              : "/images/user/default-avatar.jpg"
+                          }
                           alt={student?.name || ""}
                         />
                       </div>

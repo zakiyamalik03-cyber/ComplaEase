@@ -2,6 +2,7 @@ import mysql from "mysql2/promise";
 
 const dbConfig = {
   host: "localhost",
+  port: 3306,
   user: "root",
   password: "",
   database: "cms_db",
@@ -10,7 +11,6 @@ const dbConfig = {
   queueLimit: 0,
 };
 
-// Use a shared pool to avoid opening too many connections
 let pool;
 export function getPool() {
   if (!pool) {

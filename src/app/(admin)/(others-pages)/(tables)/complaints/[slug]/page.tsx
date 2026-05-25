@@ -62,9 +62,9 @@ export default async function ComplaintDetailPage({
         <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
           Complaint Details
         </h3>
-        
+
         <div className="space-y-6">
-          <ComplaintentDetails user={complaint.user as any} />;
+          <ComplaintentDetails user={complaint.user as any} />
           <ComplaintDetailsCard complaint={complaint as any} />
           <ComplaintFeeback complaintId={complaint.id} />
         </div>

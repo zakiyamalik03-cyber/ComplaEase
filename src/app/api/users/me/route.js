@@ -33,7 +33,10 @@ export async function GET(req) {
 
     // Get user data from database
     const [rows] = await db.execute(
-      "SELECT id, name, email, role, phone, department, image, gender FROM users WHERE id = ?", 
+      `SELECT u.id, u.name, u.email, r.name as role, u.phone, u.department, u.image, u.gender, u.bio, u.country, u.city, u.state, u.postal_code, u.tax_id
+       FROM users u 
+       JOIN roles r ON u.role_id = r.id 
+       WHERE u.id = ?`, 
       [userId]
     );
 
@@ -52,7 +55,13 @@ export async function GET(req) {
         phone: user.phone || "",
         department: user.department || "",
         image: user.image || "",
-        gender: user.gender || ""
+        gender: user.gender || "",
+        bio: user.bio || "",
+        country: user.country || "",
+        city: user.city || "",
+        state: user.state || "",
+        postal_code: user.postal_code || "",
+        tax_id: user.tax_id || ""
       }
     });
   } catch (error) {

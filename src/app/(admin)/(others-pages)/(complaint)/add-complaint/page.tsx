@@ -16,12 +16,12 @@ export default function AddComplaintPage() {
     const router = useRouter();
     const { userData } = useUser();
     const [created_by, setCreatedBy] = useState("");
-    const [status, setStatus] = useState("");
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("");
-    const [priority, setPriority] = useState("low");
+    const [complaintTypes, setComplaintTypes] = useState<{ value: string; label: string }[]>([]);
+    const [complaint_type_id, setComplaintTypeId] = useState("");
+    const [priority, setPriority] = useState("Auto");
     const [description, setDescription] = useState("");
-    const [image, setImage] = useState("");
+    const [title, setTitle] = useState("");
+    const [status, setStatus] = useState("pending");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -29,28 +29,30 @@ export default function AddComplaintPage() {
     useEffect(() => {
         if (userData?.id) {
             setCreatedBy(userData.id);
-            setStatus("Pending");
-            console.log("The User ID: ", userData.id);
+            setStatus("pending");
         }
     }, [userData]);
-    const categoryOptions = [
-        { value: "academic", label: "Academic" },
-        { value: "facilities", label: "Facilities" },
-        { value: "finance", label: "Finance" },
-        { value: "hostel", label: "Hostel" },
-        { value: "transport", label: "Transport" },
-        { value: "technical", label: "Technical" },
-        { value: "billing", label: "Billing" },
-        { value: "service", label: "Service" },
-        { value: "administrative", label: "Administrative" },
-        { value: "product", label: "Product" },
-        { value: "other", label: "Other" },
-    ];
+
+    useEffect(() => {
+        const fetchTypes = async () => {
+            try {
+                const res = await fetch("/api/complaint-types");
+                const json = await res.json();
+                if (json.success) {
+                    setComplaintTypes(json.data.map((t: any) => ({ value: String(t.id), label: t.name })));
+                }
+            } catch (err) {
+                console.error("Failed to fetch complaint types:", err);
+            }
+        };
+        fetchTypes();
+    }, []);
 
     const priorityOptions = [
-        { value: "low", label: "Low" },
-        { value: "medium", label: "Medium" },
-        { value: "high", label: "High" },
+        { value: "Auto", label: "Auto (AI Recommended)" },
+        { value: "Low", label: "Low" },
+        { value: "Medium", label: "Medium" },
+        { value: "High", label: "High" },
     ];
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,41 +62,43 @@ export default function AddComplaintPage() {
         setSuccess(false);
 
         // Basic validation
-        if (!title.trim() || !description.trim() || !category) {
+        if (!title.trim() || !description.trim() || !complaint_type_id) {
             setError("Please fill in all required fields.");
             setLoading(false);
             return;
         }
 
-        const payload = { title, category, priority, description, image, status, created_by};
+        const payload = {
+            title,
+            complaint_type_id: Number(complaint_type_id),
+            priority,
+            description,
+            status,
+            created_by: Number(created_by)
+        };
 
         try {
             const res = await fetch("/api/complaint/add-complaint", {
-
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
 
             if (!res.ok) {
-                // Safely parse error response as JSON; fallback to status text
                 let message = res.statusText;
                 try {
                     const data = await res.json();
-                    if (data.message) message = data.message;
-                } catch {
-                    // If response is not JSON (e.g., 404 HTML), keep statusText
-                }
+                    if (data.error) message = data.error;
+                } catch { }
                 throw new Error(message || "Failed to post complaint");
             }
 
             // Reset form state
             setTitle("");
-            setCategory("");
-            setPriority("low");
+            setComplaintTypeId("");
+            setPriority("Auto");
             setDescription("");
-            setImage("");
-            setStatus("Pending"); // ensure status is reset to default
+            setStatus("pending");
             setSuccess(true);
         } catch (err: any) {
             setError(err.message);
@@ -124,7 +128,7 @@ export default function AddComplaintPage() {
                             title="Complaint Submitted"
                             message="Your complaint has been successfully submitted."
                             showLink={true}
-                            linkHref="/Complaints"
+                            linkHref="/complaints"
                             linkText="Go to Complaints"
                         />
                     )}
@@ -135,7 +139,7 @@ export default function AddComplaintPage() {
                             <Input
                                 id="title"
                                 placeholder="Brief title of the complaint"
-                                defaultValue={title}
+                                value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
@@ -144,10 +148,10 @@ export default function AddComplaintPage() {
                         <div>
                             <Label htmlFor="category">Category *</Label>
                             <Select
-                                options={categoryOptions}
+                                options={complaintTypes}
                                 placeholder="Select Category"
-                                defaultValue={category}
-                                onChange={(val) => setCategory(val)}
+                                defaultValue={complaint_type_id}
+                                onChange={(val) => setComplaintTypeId(val)}
                                 className="dark:bg-dark-900"
                             />
                         </div>
@@ -172,17 +176,6 @@ export default function AddComplaintPage() {
                                 rows={5}
                                 value={description}
                                 onChange={(value) => setDescription(value)}
-                            />
-                        </div>
-
-                        {/* Image (optional) */}
-                        <div>
-                            <Label htmlFor="image">Image URL (optional)</Label>
-                            <Input
-                                id="image"
-                                placeholder="https://example.com/image.jpg"
-                                defaultValue={image}
-                                onChange={(e) => setImage(e.target.value)}
                             />
                         </div>
 

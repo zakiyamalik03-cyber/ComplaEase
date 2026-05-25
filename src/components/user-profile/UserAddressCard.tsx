@@ -1,18 +1,76 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useUser } from "@/hooks/useUser";
 
 export default function UserAddressCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  const { userData, loading, updateUser } = useUser();
+
+  const [formData, setFormData] = useState({
+    country: "",
+    cityState: "",
+    postalCode: "",
+    taxId: ""
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      const cityState = userData.city && userData.state
+        ? `${userData.city} - ${userData.state}`
+        : userData.city || userData.state || "";
+
+      setFormData({
+        country: userData.country || "",
+        cityState: cityState,
+        postalCode: userData.postal_code || "",
+        taxId: userData.tax_id || ""
+      });
+    }
+  }, [userData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    // Split cityState back into city and state
+    const parts = formData.cityState.split("-").map(p => p.trim());
+    const city = parts[0] || "";
+    const state = parts[1] || "";
+
+    try {
+      const result = await updateUser({
+        country: formData.country,
+        city: city,
+        state: state,
+        postal_code: formData.postalCode,
+        tax_id: formData.taxId
+      });
+
+      if (result.success) {
+        closeModal();
+      } else {
+        alert(result.error || "Failed to update address");
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("An unexpected error occurred");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -22,43 +80,49 @@ export default function UserAddressCard() {
               Address
             </h4>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Country
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Pakistan
-                </p>
-              </div>
+            {loading && !userData ? (
+              <div className="text-center py-4">Loading address...</div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+                <div>
+                  <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    Country
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {userData?.country || "Not provided"}
+                  </p>
+                </div>
 
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  City/State
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Lahore - Punjab
-                </p>
-              </div>
+                <div>
+                  <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    City/State
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {userData?.city && userData?.state
+                      ? `${userData.city} - ${userData.state}`
+                      : userData?.city || userData?.state || "Not provided"}
+                  </p>
+                </div>
 
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Postal Code
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  5009
-                </p>
-              </div>
+                <div>
+                  <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    Postal Code
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {userData?.postal_code || "Not provided"}
+                  </p>
+                </div>
 
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  TAX ID
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                
-                </p>
+                <div>
+                  <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                    TAX ID
+                  </p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {userData?.tax_id || "Not provided"}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <button
@@ -94,36 +158,57 @@ export default function UserAddressCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSave}>
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
                   <Label>Country</Label>
-                  <Input type="text" defaultValue="United States" />
+                  <Input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div>
                   <Label>City/State</Label>
-                  <Input type="text" defaultValue="Arizona, United States." />
+                  <Input
+                    type="text"
+                    name="cityState"
+                    value={formData.cityState}
+                    onChange={handleChange}
+                    placeholder="e.g. Lahore - Punjab"
+                  />
                 </div>
 
                 <div>
                   <Label>Postal Code</Label>
-                  <Input type="text" defaultValue="ERT 2489" />
+                  <Input
+                    type="text"
+                    name="postalCode"
+                    value={formData.postalCode}
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div>
                   <Label>TAX ID</Label>
-                  <Input type="text" defaultValue="AS4568384" />
+                  <Input
+                    type="text"
+                    name="taxId"
+                    value={formData.taxId}
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
+              <Button size="sm" variant="outline" onClick={closeModal} disabled={isSaving}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button size="sm" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

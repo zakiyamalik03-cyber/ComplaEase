@@ -4,7 +4,12 @@ import { db } from "@/lib/db"; // ✅ using your MySQL connection
 export async function GET() {
   try {
     // ✅ Query your MySQL table directly
-    const [rows] = await db.query("SELECT * FROM users ORDER BY created_at DESC");
+    const [rows] = await db.query(`
+      SELECT u.*, r.name as role 
+      FROM users u 
+      JOIN roles r ON u.role_id = r.id 
+      ORDER BY u.created_at DESC
+    `);
 
     // ✅ Return data as JSON
     return NextResponse.json({
