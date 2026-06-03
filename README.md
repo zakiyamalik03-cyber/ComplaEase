@@ -106,7 +106,7 @@ All components are built with React and styled using Tailwind CSS for optimal us
 
 This project is created and maintained by **Muhammad Ali Husnain** under the brand **DevDoz**.
 
-- 👨‍💻 **Developer**: Muhammad Ali Husnain
+- 👨‍💻 **Developer**: Ali Husnain
 - 🎨 **Brand**: [DevDoz](https://github.com/alihusnain-dev)
 - 📧 **Contact**: For inquiries and support, reach out through GitHub
 
