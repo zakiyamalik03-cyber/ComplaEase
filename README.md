@@ -3,9 +3,10 @@
 A comprehensive complaint management portal built on **Next.js and Tailwind CSS** designed specifically for university environments to efficiently track, manage, and resolve student and staff complaints.
 
 ![University Complaint Management System Preview](./banner.png)
-The University Complaint Management System provides a streamlined interface for submitting, tracking, and resolving complaints within the university ecosystem. This system offers administrators powerful tools to manage complaints, generate reports, and ensure timely resolution of issues.
 
-This application leverages the powerful features of **Next.js 15** including server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements of **React 19** and the robustness of **TypeScript**, the Complaint Management System delivers a responsive and efficient user experience.
+The University Complaint Management System provides a streamlined interface for submitting, tracking, and resolving complaints within the university ecosystem. This system offers administrators powerful tools for complaint management and resolution tracking.
+
+This application leverages the powerful features of **Next.js 15** including server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements in React 19 and TypeScript, it delivers a robust and scalable solution.
 
 ## Overview
 
@@ -101,9 +102,17 @@ All components are built with React and styled using Tailwind CSS for optimal us
 - Email notification system for status updates
 - Reporting and analytics tools
 
+## About
+
+This project is created and maintained by **Muhammad Ali Husnain** under the brand **DevDoz**.
+
+- 👨‍💻 **Developer**: Muhammad Ali Husnain
+- 🎨 **Brand**: [DevDoz](https://github.com/alihusnain-dev)
+- 📧 **Contact**: For inquiries and support, reach out through GitHub
+
 ## License
 
-This project is developed by DevDoz and maintained by Ali Husnain. All rights reserved.
+This project is developed by DevDoz and maintained by Muhammad Ali Husnain. All rights reserved.
 
 ## Support
 
