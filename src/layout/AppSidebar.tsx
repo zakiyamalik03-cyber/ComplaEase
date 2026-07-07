@@ -12,7 +12,6 @@ import {
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
-// import SidebarWidget from "./SidebarWidget";
 import { BookUser, FilePlus, Megaphone, SquareKanban, UserPlus, UsersRound } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 
@@ -82,7 +81,7 @@ const navItems: NavItem[] = [
   // },
 ];
 const complaintItems: NavItem[] = [
-    {
+  {
     name: "Add Complaint",
     icon: <FilePlus />,
     path: "/add-complaint"
@@ -126,19 +125,17 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const { userData } = useUser();
-  const role = String(userData?.role || "").toLowerCase();
-
-  // Role-based filtering of visible menu items
+  const role = String(userData?.role || (typeof window !== "undefined" ? localStorage.getItem("role") : "") || "").toLowerCase();
   const mainVisible = navItems.filter((item) => {
     const path = item.path || "";
     if (role === "student") {
       return ["/", "/complaints"].includes(path);
     }
-    if (role === "staff") {
-      return ["/", "/progress", "/students", "/complaints"].includes(path);
+    if (role === "staff" || role === "it staff" || role === "maintenance staff" || role === "electrical staff" || role === "cleaning staff") {
+      return ["/", "/dashboard", "/profile", "/complaints", "/students", "/progress", "/announcements"].includes(path);
     }
     if (role === "administrator" || role === "manager") {
-      return true; // show everything in main for Administrators/Managers
+      return true; // show everything in main  Administrators/Managers
     }
     return false;
   });
@@ -148,10 +145,10 @@ const AppSidebar: React.FC = () => {
     if (role === "student") {
       return path === "/add-complaint"; // students can add complaints
     }
-    if (role === "staff") {
-      return false; // staff list does not include complaint submenu
+    if (role === "staff" || role === "it staff" || role === "maintenance staff" || role === "electrical staff" || role === "cleaning staff") {
+      return false;
     }
-    if (role === "Administrator" || role === "Manager") {
+    if (role === "administrator" || role === "manager") {
       return path !== "/add-complaint"; // exclude Add Complaint only
     }
     return false;
@@ -173,8 +170,8 @@ const AppSidebar: React.FC = () => {
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
               className={`menu-item group  ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? "menu-item-active"
-                  : "menu-item-inactive"
+                ? "menu-item-active"
+                : "menu-item-inactive"
                 } cursor-pointer ${!isExpanded && !isHovered
                   ? "lg:justify-center"
                   : "lg:justify-start"
@@ -182,8 +179,8 @@ const AppSidebar: React.FC = () => {
             >
               <span
                 className={` ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? "menu-item-icon-active"
-                    : "menu-item-icon-inactive"
+                  ? "menu-item-icon-active"
+                  : "menu-item-icon-inactive"
                   }`}
               >
                 {nav.icon}
@@ -194,9 +191,9 @@ const AppSidebar: React.FC = () => {
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
                   className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType &&
-                      openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
-                      : ""
+                    openSubmenu?.index === index
+                    ? "rotate-180 text-brand-500"
+                    : ""
                     }`}
                 />
               )}
@@ -210,8 +207,8 @@ const AppSidebar: React.FC = () => {
               >
                 <span
                   className={`${isActive(nav.path)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
+                    ? "menu-item-icon-active"
+                    : "menu-item-icon-inactive"
                     }`}
                 >
                   {nav.icon}
@@ -241,8 +238,8 @@ const AppSidebar: React.FC = () => {
                     <Link
                       href={subItem.path}
                       className={`menu-dropdown-item ${isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
+                        ? "menu-dropdown-item-active"
+                        : "menu-dropdown-item-inactive"
                         }`}
                     >
                       {subItem.name}
@@ -250,8 +247,8 @@ const AppSidebar: React.FC = () => {
                         {subItem.new && (
                           <span
                             className={`ml-auto ${isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
+                              ? "menu-dropdown-badge-active"
+                              : "menu-dropdown-badge-inactive"
                               } menu-dropdown-badge `}
                           >
                             new
@@ -260,8 +257,8 @@ const AppSidebar: React.FC = () => {
                         {subItem.pro && (
                           <span
                             className={`ml-auto ${isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
+                              ? "menu-dropdown-badge-active"
+                              : "menu-dropdown-badge-inactive"
                               } menu-dropdown-badge `}
                           >
                             pro
@@ -387,56 +384,56 @@ const AppSidebar: React.FC = () => {
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             {mainVisible.length > 0 && (
-            <div>
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+              <div>
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
-                  }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(mainVisible, "main")}
-            </div>
+                    }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Menu"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(mainVisible, "main")}
+              </div>
             )}
 
             {complaintsVisible.length > 0 && (
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
-                  }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Complaints"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(complaintsVisible, "main")}
-            </div>
+                    }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Complaints"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(complaintsVisible, "main")}
+              </div>
             )}
             {othersVisible.length > 0 && (
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
-                  }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersVisible, "others")}
-            </div>
+                    }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Others"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(othersVisible, "others")}
+              </div>
             )}
           </div>
         </nav>
