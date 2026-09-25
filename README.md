@@ -1,119 +1,144 @@
 # University Complaint Management System
 
-A comprehensive complaint management portal built on **Next.js and Tailwind CSS** designed specifically for university environments to efficiently track, manage, and resolve student and staff complaints.
+A comprehensive complaint management portal built for university environments to efficiently submit, track, manage, and resolve student and staff complaints.
 
 ![University Complaint Management System Preview](./banner.png)
 
-The University Complaint Management System provides a streamlined interface for submitting, tracking, and resolving complaints within the university ecosystem. This system offers administrators powerful tools for complaint management and resolution tracking.
+The **University Complaint Management System** provides a streamlined platform for submitting complaints, tracking their progress, and managing resolutions. It includes dedicated functionality for students, staff, and administrators.
 
-This application leverages the powerful features of **Next.js 15** including server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements in React 19 and TypeScript, it delivers a robust and scalable solution.
+The system is built using modern web technologies including **Next.js, React, Tailwind CSS, MySQL, and NextAuth.js**, providing a responsive, secure, and scalable complaint management solution.
 
 ## Overview
 
-The University Complaint Management System is a comprehensive solution for managing complaints within university environments. It's built on:
+The University Complaint Management System is designed to simplify the complaint management process within a university environment.
 
-- Next.js 15.x
-- React 19
+## Team Members
+
+This Final Year Project was developed by a team of three members:
+
+| Team Member | Role | Responsibilities |
+|---|---|---|
+| **Roha Abid** | Frontend Developer | Designed and developed the frontend interface using React.js, Next.js, and Tailwind CSS. Worked on responsive UI, pages, components, and user experience. |
+| **Zakia Azhar** | Backend Developer | Developed backend functionality using Next.js, APIs, authentication, and complaint management logic. |
+| **Mehmooda Hassan** | Database Manager | Designed and managed the MySQL database, created database tables and relationships, and handled database integration with the application. |
+
+### Team Responsibilities
+
+**Roha Abid — Frontend Developer**
+- React.js frontend development
+- Next.js pages and components
+- Tailwind CSS styling
+- Responsive user interface
+- User experience and frontend functionality
+- Project documentation
+
+**Zakia Azhar — Backend Developer**
+- Next.js backend development
+- API development
+- Authentication and authorization
+- Complaint management functionality
+- Server-side logic
+
+**Mehmooda Hassan — Database Manager**
+- MySQL database management
+- Database design
+- Table and relationship creation
+- Database integration
+- Data management and testing
+
+### Technologies Used
+
+- Next.js
+- React.js
 - TypeScript
-- Tailwind CSS V4
+- Tailwind CSS
+- MySQL
+- NextAuth.js
+- Node.js
 
-### Key Features
-- User-friendly complaint submission interface
-- Real-time tracking of complaint status
-- Administrative dashboard for complaint management
-- Automated notification system
-- Comprehensive reporting and analytics
+## Key Features
+
+- User-friendly complaint submission
+- Real-time complaint status tracking
+- Unique complaint tracking
+- Administrative dashboard
 - Role-based access control
-- Secure authentication and data protection
+- Complaint status management
+- Automated notifications
+- Reporting and analytics
+- Secure authentication
+- File attachment support
+- Responsive design
+- Dark/Light mode support
 
-### Repository
-- [GitHub Repository](https://github.com/alihusnain-dev/complaint-management-system)
+## User Roles
+
+The system supports different roles within the university environment:
+
+### Student
+
+- Register and login
+- Submit complaints
+- Upload supporting evidence
+- View submitted complaints
+- Track complaint status
+- Receive notifications
+- View complaint history
+
+### Staff
+
+- Access assigned complaints
+- Review complaint details
+- Update complaint progress
+- Manage assigned complaints
+
+### Administrator
+
+- Manage users
+- View and manage all complaints
+- Assign complaints to relevant departments/staff
+- Update complaint status
+- Monitor complaint progress
+- View analytics and reports
+- Manage the overall complaint system
+
+## Complaint Status
+
+Complaints can move through different stages:
+
+- **Pending** – Complaint has been submitted and is waiting for review.
+- **In Progress** – Complaint is currently being investigated or handled.
+- **Resolved** – The complaint has been successfully resolved.
+- **Rejected** – The complaint has been reviewed but rejected with appropriate reasoning.
+
+## Repository
+
+[GitHub Repository](https://github.com/zakiyamalik03-cyber/ComplaEase)
 
 ## Installation
 
 ### Prerequisites
-To get started with the University Complaint Management System, ensure you have the following prerequisites installed and set up:
 
-- Node.js 18.x or later (recommended to use Node.js 20.x or later)
+Before running the project, make sure you have the following installed:
 
-### Cloning the Repository
-Clone the repository using the following command:
+- Node.js 18.x or later
+- npm
+- MySQL
+- Git
+
+---
+
+## Project Team
+
+**Roha Abid** — Frontend Developer  
+**Zakia Azhar** — Backend Developer  
+**Mehmooda Hassan** — Database Manager
+
+**Final Year Project — ComplaEase: Complaint Management System**
+
+Developed by Team ComplaEase.
+
+### Clone the Repository
 
 ```bash
-git clone https://github.com/alihusnain-dev/complaint-management-system.git
-```
-
-1. Install dependencies:
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
-    > Use `--legacy-peer-deps` flag if you face peer-dependency error during installation.
-
-2. Start the development server:
-    ```bash
-    npm run dev
-    # or
-    yarn dev
-    ```
-
-## Components
-
-The University Complaint Management System includes the following key components:
-
-- User authentication and role management
-- Complaint submission forms with file attachments
-- Complaint tracking and status updates
-- Administrative dashboard for complaint management
-- Notification system for status updates
-- Reporting and analytics tools
-- User profile management
-- Dark Mode support
-
-All components are built with React and styled using Tailwind CSS for optimal user experience.
-
-## Features
-
-### Core Features
-- User-friendly complaint submission system
-- Real-time complaint tracking and status updates
-- Administrative dashboard for complaint management
-- Role-based access control (Admin, Staff, Student)
-- Email notifications for status changes
-- Reporting and analytics dashboard
-- Secure authentication system
-
-### Technical Features
-- Responsive design for all devices
-- Fast page loads with Next.js optimizations
-- Secure API endpoints
-- Data visualization for complaint analytics
-- Dark/Light mode toggle
-- File attachment support for evidence submission
-
-## Development History
-
-### Version 1.0.0 - [June 2024]
-- Initial release of the University Complaint Management System
-- Core complaint submission and tracking functionality
-- Administrative dashboard for complaint management
-- User authentication and role-based access control
-- Email notification system for status updates
-- Reporting and analytics tools
-
-## About
-
-This project is created and maintained by **Muhammad Ali Husnain** under the brand **DevDoz**.
-
-- 👨‍💻 **Developer**: Ali Husnain
-- 🎨 **Brand**: [DevDoz](https://github.com/alihusnain-dev)
-- 📧 **Contact**: For inquiries and support, reach out through GitHub
-
-## License
-
-This project is developed by DevDoz and maintained by Muhammad Ali Husnain. All rights reserved.
-
-## Support
-
-For support or inquiries, please contact the development team or open an issue on the GitHub repository.
+git clone https://github.com/zakiyamalik03-cyber/ComplaEase.git
