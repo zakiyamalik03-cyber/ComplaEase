@@ -1,4 +1,4 @@
-# University Complaint Management System
+# ComplaEase: Complaint Management System
 
 A comprehensive complaint management portal built for university environments to efficiently submit, track, manage, and resolve student and staff complaints.
 
