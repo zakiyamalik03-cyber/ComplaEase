@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise');
 async function createTable() {
   const connection = await mysql.createConnection({
     host: "localhost",
-    port: 3307,
+    port: 3306,
     user: "root",
     password: "",
     database: "cms_db",

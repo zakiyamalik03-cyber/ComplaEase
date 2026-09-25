@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
+    const jwtSecret = process.env.JWT_SECRET || "dev-jwt-secret-change-me";
 
     if (!email || !password)
       return Response.json({ error: "All fields required" }, { status: 400 });
@@ -26,7 +27,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: "1d" }
     );
 
