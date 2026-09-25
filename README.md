@@ -2,15 +2,15 @@
 
 A comprehensive complaint management portal built for university environments to efficiently submit, track, manage, and resolve student and staff complaints.
 
-![University Complaint Management System Preview](./banner.png)
+![Complaint Management System Preview](./banner.png)
 
-The **University Complaint Management System** provides a streamlined platform for submitting complaints, tracking their progress, and managing resolutions. It includes dedicated functionality for students, staff, and administrators.
+The **ComplaEase: Complaint Management System** provides a streamlined platform for submitting complaints, tracking their progress, and managing resolutions. It includes dedicated functionality for students, staff, and administrators.
 
 The system is built using modern web technologies including **Next.js, React, Tailwind CSS, MySQL, and NextAuth.js**, providing a responsive, secure, and scalable complaint management solution.
 
 ## Overview
 
-The University Complaint Management System is designed to simplify the complaint management process within a university environment.
+The ComplaEase: Complaint Management System is designed to simplify the complaint management process within a university environment.
 
 ## Team Members
 
