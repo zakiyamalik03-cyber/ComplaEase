@@ -12,12 +12,9 @@ export async function POST(req) {
       return Response.json({ error: "All fields required" }, { status: 400 });
 
     const [rows] = await db.execute(
-      `SELECT u.*, r.name as role 
-       FROM users u 
-       JOIN roles r ON u.role_id = r.id 
-       WHERE u.email = ?`, 
-      [email]
-    );
+  `SELECT * FROM users WHERE email = ?`,
+  [email]
+);
     const user = rows[0];
 
     if (!user) return Response.json({ error: "Invalid email" }, { status: 400 });
