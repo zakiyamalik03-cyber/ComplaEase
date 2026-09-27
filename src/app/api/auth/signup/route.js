@@ -20,9 +20,9 @@ export async function POST(req) {
 
     // Insert student record
     await db.execute(
-      "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'student')",
-      [`${fname} ${lname}`, email, hashedPassword]
-    );
+  "INSERT INTO users (name, email, password, role, role_id) VALUES (?, ?, ?, 'student', 1)",
+  [`${fname} ${lname}`, email, hashedPassword]
+);
 
     return Response.json({ success: true, message: "Account created successfully!" });
   } catch (error) {
