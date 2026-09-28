@@ -12,7 +12,10 @@ export async function POST(req) {
       return Response.json({ error: "All fields required" }, { status: 400 });
 
     const [rows] = await db.execute(
-  `SELECT * FROM users WHERE email = ?`,
+  `SELECT u.*, COALESCE(r.name, u.role) AS role
+   FROM users u
+   LEFT JOIN roles r ON u.role_id = r.id
+   WHERE u.email = ?`,
   [email]
 );
     const user = rows[0];

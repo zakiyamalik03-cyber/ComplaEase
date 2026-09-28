@@ -33,12 +33,12 @@ export async function GET(req) {
 
     // Get user data from database
     const [rows] = await db.execute(
-  `SELECT u.id, u.name, u.email, u.role, u.phone, u.department, u.image, u.gender, u.bio, u.country, u.city, u.state, u.postal_code, u.tax_id
-   FROM users u 
-   WHERE u.id = ?`, 
+  `SELECT u.id, u.name, u.email, COALESCE(r.name, u.role) AS role, u.phone, u.department, u.image, u.gender, u.bio, u.country, u.city, u.state, u.postal_code, u.tax_id
+   FROM users u
+   LEFT JOIN roles r ON u.role_id = r.id
+   WHERE u.id = ?`,
   [userId]
 );
-
     if (rows.length === 0) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
