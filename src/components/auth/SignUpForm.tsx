@@ -18,6 +18,7 @@ export default function SignUpForm({ onToggle }: SignUpFormProps) {
     lname: "",
     email: "",
     password: "",
+    department: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -126,6 +127,18 @@ export default function SignUpForm({ onToggle }: SignUpFormProps) {
                   onChange={handleChange}
                 />
               </div>
+
+              <div>
+  <Label>Department<span className="text-error-500">*</span></Label>
+  <Input
+    type="text"
+    id="department"
+    name="department"
+    placeholder="e.g. Computer Science"
+    defaultValue={formData.department}
+    onChange={handleChange}
+  />
+</div>
 
               <div>
                 <Label>Password<span className="text-error-500">*</span></Label>

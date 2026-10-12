@@ -3,9 +3,9 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    const { fname, lname, email, password } = await req.json();
+    const { fname, lname, email, password, department } = await req.json();
 
-    if (!fname || !lname || !email || !password) {
+    if (!fname || !lname || !email || !password || !department) {
       return Response.json({ error: "All fields are required" }, { status: 400 });
     }
 
@@ -20,8 +20,8 @@ export async function POST(req) {
 
     // Insert student record
     await db.execute(
-  "INSERT INTO users (name, email, password, role, role_id) VALUES (?, ?, ?, 'student', 1)",
-  [`${fname} ${lname}`, email, hashedPassword]
+  "INSERT INTO users (name, email, password, role, role_id, department) VALUES (?, ?, ?, 'student', 1, ?)",
+  [`${fname} ${lname}`, email, hashedPassword, department.trim()]
 );
 
     return Response.json({ success: true, message: "Account created successfully!" });
